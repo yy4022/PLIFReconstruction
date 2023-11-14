@@ -1,0 +1,5 @@
+-i https://pypi.douban.com/simple
+matplotlib
+
+numpy == 1.24.4
+h5py == 3.10.0

@@ -1,0 +1,11 @@
+*.out
+__pycache__/
+.idea/
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+data/
