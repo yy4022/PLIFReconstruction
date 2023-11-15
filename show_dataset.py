@@ -9,7 +9,7 @@ This file is provided for visualising the datasets for training, validating and 
 
 # PART 1: define the parameters
 first_PLIF_num = int(1)
-show_num = 1000
+show_num = 2000
 
 file_PIV = str('data/IA_PIV.mat')
 file_PLIF = str('data/IA_PLIF_1to2500.mat')
@@ -137,6 +137,6 @@ def show_specifiedImage():
     plt.show()
 
 
-# PART : the main part which calling the related functions for showing the datasets
+# PART 5: the main part which calling the related functions for showing the datasets
 show_meanImage()
 show_specifiedImage()
