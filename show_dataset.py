@@ -48,14 +48,14 @@ def show_meanImage():
     mean_PIV = np.mean(dataset_PIV, axis=1)  # (3, 73, 73)
     mean_PLIF = np.mean(dataset_PLIF, axis=0) # (608, 409)
 
-    plt.figure(figsize=(28, 8))
+    plt.figure(figsize=(16, 8))
     norm = mpl.colors.Normalize(vmin=0.0, vmax=1.0)
 
     # show the mean PLIF image
     plt.subplot(1, 4, 1)
     plt.title('The Mean Image of PLIF')
     plt.imshow(mean_PLIF, cmap='hot', extent=(PLIF_x.min(), PLIF_x.max(), PLIF_y.min(), PLIF_y.max()),
-               origin='lower')
+               origin='lower', interpolation='bicubic')
     sm = plt.cm.ScalarMappable(norm=norm)
     sm.set_array([])
     plt.colorbar()
@@ -64,7 +64,7 @@ def show_meanImage():
     plt.subplot(1, 4, 2)
     plt.title('The Mean Image of PIV-x')
     plt.imshow(mean_PIV[0][:][:], cmap='turbo', extent=(PIV_x.min(), PIV_x.max(), PIV_y.min(), PIV_y.max()),
-               origin='lower')
+               origin='lower', interpolation='bicubic')
     sm = plt.cm.ScalarMappable(norm=norm)
     sm.set_array([])
     plt.colorbar()
@@ -73,7 +73,7 @@ def show_meanImage():
     plt.subplot(1, 4, 3)
     plt.title('The Mean Image of PIV-y')
     plt.imshow(mean_PIV[1][:][:], cmap='turbo', extent=(PIV_x.min(), PIV_x.max(), PIV_y.min(), PIV_y.max()),
-               origin='lower')
+               origin='lower', interpolation='bicubic')
     sm = plt.cm.ScalarMappable(norm=norm)
     sm.set_array([])
     plt.colorbar()
@@ -82,7 +82,7 @@ def show_meanImage():
     plt.subplot(1, 4, 4)
     plt.title('The Mean Image of PIV-z')
     plt.imshow(mean_PIV[2][:][:], cmap='turbo', extent=(PIV_x.min(), PIV_x.max(), PIV_y.min(), PIV_y.max()),
-               origin='lower')
+               origin='lower', interpolation='bicubic')
     sm = plt.cm.ScalarMappable(norm=norm)
     sm.set_array([])
     plt.colorbar()
@@ -91,14 +91,15 @@ def show_meanImage():
 
 # PART 4: define the function for showing the specified image
 def show_specifiedImage():
-    plt.figure(figsize=(28, 8))
+    plt.figure(figsize=(16, 8))
     norm = mpl.colors.Normalize(vmin=0.0, vmax=1.0)
 
     # show the specified PLIF image
     plt.subplot(1, 4, 1)
     plt.title(f'The PLIF Image {show_num}')
     plt.imshow(dataset_PLIF[show_num-first_PLIF_num][:][:], cmap='hot',
-               extent=(PLIF_x.min(), PLIF_x.max(), PLIF_y.min(), PLIF_y.max()), origin='lower')
+               extent=(PLIF_x.min(), PLIF_x.max(), PLIF_y.min(), PLIF_y.max()), origin='lower',
+               interpolation='bicubic')
     sm = plt.cm.ScalarMappable(norm=norm)
     sm.set_array([])
     plt.colorbar()
@@ -107,7 +108,8 @@ def show_specifiedImage():
     plt.subplot(1, 4, 2)
     plt.title('The Mean Image of PIV-x')
     plt.imshow(dataset_PIV[0][show_num-1][:][:], cmap='turbo',
-               extent=(PIV_x.min(), PIV_x.max(), PIV_y.min(), PIV_y.max()), origin='lower')
+               extent=(PIV_x.min(), PIV_x.max(), PIV_y.min(), PIV_y.max()), origin='lower',
+               interpolation='bicubic')
     sm = plt.cm.ScalarMappable(norm=norm)
     sm.set_array([])
     plt.colorbar()
@@ -116,7 +118,8 @@ def show_specifiedImage():
     plt.subplot(1, 4, 3)
     plt.title('The Mean Image of PIV-y')
     plt.imshow(dataset_PIV[1][show_num-1][:][:], cmap='turbo',
-               extent=(PIV_x.min(), PIV_x.max(), PIV_y.min(), PIV_y.max()), origin='lower')
+               extent=(PIV_x.min(), PIV_x.max(), PIV_y.min(), PIV_y.max()), origin='lower',
+               interpolation='bicubic')
     sm = plt.cm.ScalarMappable(norm=norm)
     sm.set_array([])
     plt.colorbar()
@@ -125,7 +128,8 @@ def show_specifiedImage():
     plt.subplot(1, 4, 4)
     plt.title('The Mean Image of PIV-z')
     plt.imshow(dataset_PIV[2][show_num-1][:][:], cmap='turbo',
-               extent=(PIV_x.min(), PIV_x.max(), PIV_y.min(), PIV_y.max()), origin='lower')
+               extent=(PIV_x.min(), PIV_x.max(), PIV_y.min(), PIV_y.max()), origin='lower',
+               interpolation='bicubic')
     sm = plt.cm.ScalarMappable(norm=norm)
     sm.set_array([])
     plt.colorbar()
