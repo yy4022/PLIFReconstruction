@@ -1,9 +1,16 @@
 import numpy as np
+import torch
 
 from preprocess_dataset import preprocess_data, preprocess_old_data, show_image
 
 # PART 1: define the parameters
-# 1. provide all filenames of PIV, PLIF data
+# 1. choose the device
+print(torch.__version__)
+print(torch.cuda.is_available())
+device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+print(f"Selected device: {device}")
+
+# 2. provide all filenames of PIV, PLIF data
 file1_PIV = str('data/Attached state/D1F1_air240_PIV_1001to2000.mat') # attached-1000
 file1_PLIF = str('data/Attached state/D1F1_air240_PLIF_1001to2000.mat')
 file2_PIV = str('data/Attached state/D1F1_air240_PIV_2001to3000.mat') # attached-1000
