@@ -1,5 +1,6 @@
 import numpy as np
 import torch
+from torch.utils.data import DataLoader
 
 from preprocess_dataset import preprocess_data, preprocess_old_data, show_image, MyDataset
 
@@ -10,7 +11,10 @@ print(torch.cuda.is_available())
 device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 print(f"Selected device: {device}")
 
-# 2. provide all filenames of PIV, PLIF data
+# 2. define the parameters for training the model
+batch_size = 20
+
+# 3. provide all filenames of PIV, PLIF data
 file1_PIV = str('data/Attached state/D1F1_air240_PIV_1001to2000.mat') # attached-1000
 file1_PLIF = str('data/Attached state/D1F1_air240_PLIF_1001to2000.mat')
 file2_PIV = str('data/Attached state/D1F1_air240_PIV_2001to3000.mat') # attached-1000
@@ -107,4 +111,13 @@ validation_PLIF_data = MyDataset(validation_PLIF_data)
 testing_PIV_data = MyDataset(testing_PIV_data)
 testing_PLIF_data = MyDataset(testing_PLIF_data)
 
+# 3.6. create the corresponding dataloaders
+training_PIV_loader = DataLoader(dataset=training_PIV_data, batch_size=batch_size, shuffle=False)
+training_PLIF_loader = DataLoader(dataset=training_PLIF_data, batch_size=batch_size, shuffle=False)
+
+validation_PIV_loader = DataLoader(dataset=validation_PIV_data, batch_size=batch_size, shuffle=False)
+validation_PLIF_loader = DataLoader(dataset=validation_PLIF_data, batch_size=batch_size, shuffle=False)
+
+testing_PIV_loader = DataLoader(dataset=testing_PIV_data, batch_size=batch_size, shuffle=False)
+testing_PLIF_loader = DataLoader(dataset=testing_PLIF_data, batch_size=batch_size, shuffle=False)
 
