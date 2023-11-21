@@ -1,7 +1,7 @@
 import numpy as np
 import torch
 
-from preprocess_dataset import preprocess_data, preprocess_old_data, show_image
+from preprocess_dataset import preprocess_data, preprocess_old_data, show_image, MyDataset
 
 # PART 1: define the parameters
 # 1. choose the device
@@ -56,19 +56,19 @@ PIV_reattachment_data = np.concatenate((PIV_data7, PIV_data8), axis=1) # reattac
 PLIF_reattachment_data = np.concatenate((PLIF_data7, PLIF_data8), axis=0)
 
 # 3. split the datasets for training, evaluation and testing
-# get the total number of data for every state
+# 3.1. get the total number of data for every state
 attached_num = PIV_attached_data.shape[1]
 detachment_num = PIV_detachment_data.shape[1]
 lifted_num = PIV_lifted_data.shape[1]
 reattachment_num = PIV_reattachment_data.shape[1]
 
-# calculate the position of splitting points to satisfy the proportion (3: 1: 1)
+# 3.2. calculate the position of splitting points to satisfy the proportion (3: 1: 1)
 attached_split_points = [int(np.floor(attached_num * 0.6)), int(np.floor(attached_num * 0.8))]
 detachment_split_points = [int(np.floor(detachment_num * 0.6)), int(np.floor(detachment_num * 0.8))]
 lifted_split_points = [int(np.floor(lifted_num * 0.6)), int(np.floor(lifted_num * 0.8))]
 reattachment_split_points = [int(np.floor(reattachment_num * 0.6)), int(np.floor(reattachment_num * 0.8))]
 
-# split the datasets according to the splitting points
+# 3.3. split the datasets according to the splitting points
 PIV_attached_data_split = np.split(PIV_attached_data, attached_split_points, axis=1)
 PLIF_attached_data_split = np.split(PLIF_attached_data, attached_split_points, axis=0)
 
@@ -81,15 +81,15 @@ PLIF_lifted_data_split = np.split(PLIF_lifted_data, lifted_split_points, axis=0)
 PIV_reattachment_data_split = np.split(PIV_reattachment_data, reattachment_split_points, axis=1)
 PLIF_reattachment_data_split = np.split(PLIF_reattachment_data, reattachment_split_points, axis=0)
 
-# obtain the training, evaluation, training sets
+# 3.4. obtain the training, validation, training sets
 training_PIV_data = np.concatenate((PIV_attached_data_split[0], PIV_detachment_data_split[0],
                                     PIV_lifted_data_split[0], PIV_reattachment_data_split[0]), axis=1)
 training_PLIF_data = np.concatenate((PLIF_attached_data_split[0], PLIF_detachment_data_split[0],
                                      PLIF_lifted_data_split[0], PLIF_reattachment_data_split[0]), axis=0)
 
-evaluation_PIV_data = np.concatenate((PIV_attached_data_split[1], PIV_detachment_data_split[1],
+validation_PIV_data = np.concatenate((PIV_attached_data_split[1], PIV_detachment_data_split[1],
                                       PIV_lifted_data_split[1], PIV_reattachment_data_split[1]), axis=1)
-evaluation_PLIF_data = np.concatenate((PLIF_attached_data_split[1], PLIF_detachment_data_split[1],
+validation_PLIF_data = np.concatenate((PLIF_attached_data_split[1], PLIF_detachment_data_split[1],
                                        PLIF_lifted_data_split[1], PLIF_reattachment_data_split[1]), axis=0)
 
 testing_PIV_data = np.concatenate((PIV_attached_data_split[2], PIV_detachment_data_split[2],
@@ -97,5 +97,14 @@ testing_PIV_data = np.concatenate((PIV_attached_data_split[2], PIV_detachment_da
 testing_PLIF_data = np.concatenate((PLIF_attached_data_split[2], PLIF_detachment_data_split[2],
                                     PLIF_lifted_data_split[2], PLIF_reattachment_data_split[2]), axis=0)
 
+# 3.5. create the corresponding datasets
+training_PIV_data = MyDataset(training_PIV_data)
+training_PLIF_data = MyDataset(training_PLIF_data)
+
+validation_PIV_data = MyDataset(validation_PIV_data)
+validation_PLIF_data = MyDataset(validation_PLIF_data)
+
+testing_PIV_data = MyDataset(testing_PIV_data)
+testing_PLIF_data = MyDataset(testing_PLIF_data)
 
 

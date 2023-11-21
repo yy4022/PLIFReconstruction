@@ -5,10 +5,23 @@ import numpy as np
 import matplotlib as mpl
 import scipy.io
 from matplotlib import pyplot as plt
+from torch.utils.data import Dataset
 
 """
 This file defines the functions for pre-processing the datasets.
 """
+
+# Define the class of Dataset
+class MyDataset(Dataset):
+    def __init__(self, img_data):
+        self.img_data = img_data
+        self.length = len(self.img_data)
+
+    def __len__(self):
+        return self.length
+
+    def __getitem__(self, index):
+        return self.img_data[index]
 
 
 def show_image(PIV_image: np.ndarray, PLIF_image: np.ndarray,
