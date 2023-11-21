@@ -120,6 +120,10 @@ def preprocess_data(file_PIV: str, file_PLIF: str) \
     cropped_PIV = dataset_PIV[:, :, indices_PIV_y[:, np.newaxis], indices_PIV_x]
     cropped_PLIF = dataset_PLIF[:, indices_PLIF_y[:, np.newaxis], indices_PLIF_x]
 
+    # 4. change the type of dataset from 'float64' to 'float32'
+    cropped_PIV = cropped_PIV.astype('float32')
+    cropped_PLIF = cropped_PLIF.astype('float32')
+
     return cropped_PIV, cropped_PLIF, cropped_xmin, cropped_xmax, cropped_ymin, cropped_ymax
 
 
@@ -177,5 +181,9 @@ def preprocess_old_data(file_PIV: str, file_PLIF: str) \
     # 3. crop the datasets via the range
     cropped_PIV = dataset_PIV[:, :, indices_PIV_y[:, np.newaxis], indices_PIV_x]
     cropped_PLIF = dataset_PLIF[:, indices_PLIF_y[:, np.newaxis], indices_PLIF_x]
+
+    # 4. change the type of dataset from 'float64' to 'float32'
+    cropped_PIV = cropped_PIV.astype('float32')
+    cropped_PLIF = cropped_PLIF.astype('float32')
 
     return cropped_PIV, cropped_PLIF, cropped_xmin, cropped_xmax, cropped_ymin, cropped_ymax

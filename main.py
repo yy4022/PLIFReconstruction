@@ -82,23 +82,20 @@ PIV_reattachment_data_split = np.split(PIV_reattachment_data, reattachment_split
 PLIF_reattachment_data_split = np.split(PLIF_reattachment_data, reattachment_split_points, axis=0)
 
 # obtain the training, evaluation, training sets
-# training_PIV_data = np.concatenate((PIV_attached_data_split[0], PIV_detachment_data_split[0],
-#                                     PIV_lifted_data_split[0], PIV_reattachment_data_split[0]), axis=1)
-# training_PLIF_data = np.concatenate((PLIF_attached_data_split[0], PLIF_detachment_data_split[0],
-#                                      PLIF_lifted_data_split[0], PLIF_reattachment_data_split[0]), axis=0)
-#
-# evaluation_PIV_data = np.concatenate((PIV_attached_data_split[1], PIV_detachment_data_split[1],
-#                                       PIV_lifted_data_split[1], PIV_reattachment_data_split[1]), axis=1)
-# evaluation_PLIF_data = np.concatenate((PLIF_attached_data_split[1], PLIF_detachment_data_split[1],
-#                                        PLIF_lifted_data_split[1], PLIF_reattachment_data_split[1]), axis=0)
-#
-# testing_PIV_data = np.concatenate((PIV_attached_data_split[2], PIV_detachment_data_split[2],
-#                                    PIV_lifted_data_split[2], PIV_reattachment_data_split[2]), axis=1)
-# testing_PLIF_data = np.concatenate((PLIF_attached_data_split[2], PLIF_detachment_data_split[2],
-#                                     PLIF_lifted_data_split[2], PLIF_reattachment_data_split[2]), axis=0)
-#
-# print(np.shape(training_PIV_data))
-# print(np.shape(evaluation_PIV_data))
-# print(np.shape(testing_PIV_data))
+training_PIV_data = np.concatenate((PIV_attached_data_split[0], PIV_detachment_data_split[0],
+                                    PIV_lifted_data_split[0], PIV_reattachment_data_split[0]), axis=1)
+training_PLIF_data = np.concatenate((PLIF_attached_data_split[0], PLIF_detachment_data_split[0],
+                                     PLIF_lifted_data_split[0], PLIF_reattachment_data_split[0]), axis=0)
+
+evaluation_PIV_data = np.concatenate((PIV_attached_data_split[1], PIV_detachment_data_split[1],
+                                      PIV_lifted_data_split[1], PIV_reattachment_data_split[1]), axis=1)
+evaluation_PLIF_data = np.concatenate((PLIF_attached_data_split[1], PLIF_detachment_data_split[1],
+                                       PLIF_lifted_data_split[1], PLIF_reattachment_data_split[1]), axis=0)
+
+testing_PIV_data = np.concatenate((PIV_attached_data_split[2], PIV_detachment_data_split[2],
+                                   PIV_lifted_data_split[2], PIV_reattachment_data_split[2]), axis=1)
+testing_PLIF_data = np.concatenate((PLIF_attached_data_split[2], PLIF_detachment_data_split[2],
+                                    PLIF_lifted_data_split[2], PLIF_reattachment_data_split[2]), axis=0)
+
 
 
