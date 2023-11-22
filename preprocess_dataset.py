@@ -4,6 +4,7 @@ import h5py
 import numpy as np
 import matplotlib as mpl
 import scipy.io
+import math
 from matplotlib import pyplot as plt
 from torch.utils.data import Dataset
 
@@ -199,4 +200,109 @@ def preprocess_old_data(file_PIV: str, file_PLIF: str) \
     cropped_PIV = cropped_PIV.astype('float32')
     cropped_PLIF = cropped_PLIF.astype('float32')
 
-    return cropped_PIV, cropped_PLIF, cropped_xmin, cropped_xmax, cropped_ymin, cropped_ymax
+    # STEP 3: discretize the image data into 12 boxes (3 rows, 4 columns)
+    discretized_PIV = discretize_image(cropped_PIV, rows=3, columns=4, type="PIV")
+    discretized_PLIF = discretize_image(cropped_PLIF, rows=3, columns=4, type="PLIF")
+
+    return discretized_PIV, discretized_PLIF, cropped_xmin, cropped_xmax, cropped_ymin, cropped_ymax
+
+def discretize_image(image: np.ndarray, rows: int, columns: int, type: str):
+
+    """
+    Internal Function:
+        discretize the image into rows * columns boxes
+    :param image: a numpy array representing the data of PIV or PLIF image
+    :param rows: an int representing the rows of the discretized image
+    :param columns: an int representing the columns of the discretized image
+    :param type: a string representing the type of image (PIV or PLIF)
+    :return: a numpy array denotes the discretized image with rows * columns boxes
+    """
+
+    # STEP 1: get the size of x (last dimension) and y (second last dimension)
+    x_size = image.shape[-1]
+    y_size = image.shape[-2]
+    image_num = image.shape[-3]
+
+    # STEP 2: get the x_range and y_range of every box (total: 12 boxes)
+    x_range = math.floor(x_size / columns)
+    y_range = math.floor(y_size / rows)
+
+    if type == "PIV":
+        channels = image.shape[0]
+        discretized_image = np.zeros((rows * columns, channels, image_num, y_range, x_range))
+
+        for j in range(rows):
+            for i in range(columns):
+                start_x = i * x_range
+                end_x = (i + 1) * x_range
+                start_y = j * y_range
+                end_y = (j + 1) * y_range
+
+                box = image[:, :, start_y:end_y, start_x:end_x]
+                discretized_image[j * columns + i, :, :, :, :] = box
+
+    elif type == "PLIF":
+        discretized_image = np.zeros((rows * columns, image_num, y_range, x_range))
+
+        for j in range(rows):
+            for i in range(columns):
+                start_x = i * x_range
+                end_x = (i + 1) * x_range
+                start_y = j * y_range
+                end_y = (j + 1) * y_range
+
+                box = image[:, start_y:end_y, start_x:end_x]
+                discretized_image[j * columns + i, :, :, :] = box
+
+    else:
+        print("Error: the image type is neither PIV nor PLIF.")
+        exit()
+
+    return discretized_image
+
+def show_box_PIV(image: np.ndarray, dimension: int, rows: int, columns: int):
+
+    plt.figure(figsize=(16, 12))
+    norm = mpl.colors.Normalize(vmin=0.0, vmax=1.0)
+
+    # i, j denotes the row and column of this box, respectively
+    for j in range(rows):
+        for i in range(columns):
+            plt.subplot(3, 4, (rows - 1 - j) * columns + i + 1)
+
+            if dimension == 1:
+                plt.title(f'The box {(rows - 1 - j) * columns + i + 1} of PIV-x image')
+            elif dimension == 2:
+                plt.title(f'The box {(rows - 1 - j) * columns + i + 1} of PIV-y image')
+            elif dimension == 3:
+                plt.title(f'The box {(rows - 1 - j) * columns + i + 1} of PIV-z image')
+            else:
+                print("Error: the input dimension of PIV image is wrong.")
+                exit()
+
+            plt.imshow(image[j * columns + i][dimension - 1][:][:], cmap='turbo',
+                       origin='lower', interpolation='bicubic')
+            sm = plt.cm.ScalarMappable(norm=norm)
+            sm.set_array([])
+            plt.colorbar()
+
+    plt.show()
+
+
+def show_box_PLIF(image: np.ndarray, rows: int, columns: int):
+
+    plt.figure(figsize=(16, 12))
+    norm = mpl.colors.Normalize(vmin=0.0, vmax=1.0)
+
+    # i, j denotes the row and column of this box, respectively
+    for j in range(rows):
+        for i in range(columns):
+            plt.subplot(3, 4, (rows - 1 - j) * columns + i + 1)
+            plt.title(f'The box {(rows - 1 - j) * columns + i + 1} of PLIF image')
+            plt.imshow(image[j * columns + i][:][:], cmap='hot',
+                       origin='lower', interpolation='bicubic')
+            sm = plt.cm.ScalarMappable(norm=norm)
+            sm.set_array([])
+            plt.colorbar()
+
+    plt.show()
