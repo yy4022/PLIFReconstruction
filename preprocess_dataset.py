@@ -142,15 +142,14 @@ def preprocess_data(file_PIV: str, file_PLIF: str) \
 
 
 def preprocess_old_data(file_PIV: str, file_PLIF: str) \
-        -> Tuple[np.ndarray, np.ndarray, float, float, float, float]:
+        -> Tuple[np.ndarray, np.ndarray]:
 
     """
        pre-process the dataset provided by the old datasets (used by Barwey)
        :param file_PIV: a string represents the filename of PIV image
        :param file_PLIF: a string represents the filename of PLIF image
        :return: a numpy array represents the value of preprocessed PIV image,
-               a numpy array represents the value of preprocessed PLIF image,
-               four float numbers denotes xmin, xmax, ymin, ymax of preprocessed data
+               a numpy array represents the value of preprocessed PLIF image
        """
 
     # STEP 1: load the PIV and PLIF dataset
@@ -204,7 +203,7 @@ def preprocess_old_data(file_PIV: str, file_PLIF: str) \
     discretized_PIV = discretize_image(cropped_PIV, rows=3, columns=4, type="PIV")
     discretized_PLIF = discretize_image(cropped_PLIF, rows=3, columns=4, type="PLIF")
 
-    return discretized_PIV, discretized_PLIF, cropped_xmin, cropped_xmax, cropped_ymin, cropped_ymax
+    return discretized_PIV, discretized_PLIF
 
 def discretize_image(image: np.ndarray, rows: int, columns: int, type: str):
 
@@ -222,12 +221,18 @@ def discretize_image(image: np.ndarray, rows: int, columns: int, type: str):
     x_size = image.shape[-1]
     y_size = image.shape[-2]
     image_num = image.shape[-3]
+    img_num = 99
 
     # STEP 2: get the x_range and y_range of every box (total: 12 boxes)
     x_range = math.floor(x_size / columns)
     y_range = math.floor(y_size / rows)
 
     if type == "PIV":
+
+        show_PIV(image[:, img_num, :, :], dimension=1)
+        show_PIV(image[:, img_num, :, :], dimension=2)
+        show_PIV(image[:, img_num, :, :], dimension=3)
+
         channels = image.shape[0]
         discretized_image = np.zeros((rows * columns, channels, image_num, y_range, x_range))
 
@@ -242,6 +247,9 @@ def discretize_image(image: np.ndarray, rows: int, columns: int, type: str):
                 discretized_image[j * columns + i, :, :, :, :] = box
 
     elif type == "PLIF":
+
+        show_PLIF(image[img_num, :, :])
+
         discretized_image = np.zeros((rows * columns, image_num, y_range, x_range))
 
         for j in range(rows):
@@ -304,5 +312,42 @@ def show_box_PLIF(image: np.ndarray, rows: int, columns: int):
             sm = plt.cm.ScalarMappable(norm=norm)
             sm.set_array([])
             plt.colorbar()
+
+    plt.show()
+
+def show_PIV(image: np.ndarray, dimension: int):
+
+    plt.figure(figsize=(16, 12))
+    norm = mpl.colors.Normalize(vmin=0.0, vmax=1.0)
+
+    if dimension == 1:
+        plt.title('The PIV-x image')
+    elif dimension == 2:
+        plt.title('The PIV-y image')
+    elif dimension == 3:
+        plt.title('The PIV-z image')
+    else:
+        print("Error: the input dimension of PIV image is wrong.")
+        exit()
+
+    plt.imshow(image[dimension-1][:][:], cmap='turbo', origin='lower', interpolation='bicubic')
+
+    sm = plt.cm.ScalarMappable(norm=norm)
+    sm.set_array([])
+    plt.colorbar()
+
+    plt.show()
+
+def show_PLIF(image: np.ndarray):
+
+    plt.figure(figsize=(16, 12))
+    norm = mpl.colors.Normalize(vmin=0.0, vmax=1.0)
+
+    plt.title('The PLIF image')
+    plt.imshow(image, cmap='hot', origin='lower', interpolation='bicubic')
+
+    sm = plt.cm.ScalarMappable(norm=norm)
+    sm.set_array([])
+    plt.colorbar()
 
     plt.show()
