@@ -247,9 +247,10 @@ def discretize_image(image: np.ndarray, rows: int, columns: int, type: str):
 
     if type == "PIV":
 
-        show_PIV(image[:, img_num, :, :], dimension=1)
-        show_PIV(image[:, img_num, :, :], dimension=2)
-        show_PIV(image[:, img_num, :, :], dimension=3)
+        # The comment part is used for checking the discretized PIV image
+        # show_PIV(image[:, img_num, :, :], dimension=1)
+        # show_PIV(image[:, img_num, :, :], dimension=2)
+        # show_PIV(image[:, img_num, :, :], dimension=3)
 
         channels = image.shape[0]
         discretized_image = np.zeros((rows * columns, channels, image_num, y_range, x_range))
@@ -266,7 +267,8 @@ def discretize_image(image: np.ndarray, rows: int, columns: int, type: str):
 
     elif type == "PLIF":
 
-        show_PLIF(image[img_num, :, :])
+        # The comment part is used for checking the discretized PLIF image
+        # show_PLIF(image[img_num, :, :])
 
         discretized_image = np.zeros((rows * columns, image_num, y_range, x_range))
 
