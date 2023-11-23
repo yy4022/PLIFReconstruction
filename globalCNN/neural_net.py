@@ -1,3 +1,4 @@
+import torch
 from torch import nn
 
 
@@ -38,7 +39,7 @@ class FullyCNN(nn.Module):
             nn.ReLU(),
 
             # 2nd Transpose Convolutional layer
-            nn.ConvTranspose2d(in_channels=8, out_channels=1, kernel_size=3, stride=1)
+            nn.ConvTranspose2d(in_channels=8, out_channels=1, kernel_size=(3, 4), stride=1)
         )
 
     def forward(self, x):
