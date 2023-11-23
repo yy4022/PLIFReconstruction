@@ -25,6 +25,20 @@ class MyDataset(Dataset):
         return self.img_data[index]
 
 
+def min_max_scaler(data: np.ndarray) -> np.ndarray:
+
+    """
+    Internal Function:
+    use min-max scaling to the given numpy array
+    :param data: a numpy array containing the data to be scaled.
+    :return: a numpy array of the same shape of 'data',
+            but scaled its elements lie in the range [0, 1].
+    """
+
+    min_value = np.amin(data)
+    max_value = np.amax(data)
+    return (data - min_value) / (max_value - min_value)
+
 def show_image(PIV_image: np.ndarray, PLIF_image: np.ndarray,
                xmin: float, xmax: float, ymin: float, ymax: float) -> None:
     """
@@ -199,9 +213,13 @@ def preprocess_old_data(file_PIV: str, file_PLIF: str) \
     cropped_PIV = cropped_PIV.astype('float32')
     cropped_PLIF = cropped_PLIF.astype('float32')
 
-    # STEP 3: discretize the image data into 12 boxes (3 rows, 4 columns)
-    discretized_PIV = discretize_image(cropped_PIV, rows=3, columns=4, type="PIV")
-    discretized_PLIF = discretize_image(cropped_PLIF, rows=3, columns=4, type="PLIF")
+    # STEP 3: normalize the image data via min-max scaling method
+    normalized_PIV = min_max_scaler(cropped_PIV)
+    normalized_PLIF = min_max_scaler(cropped_PLIF)
+
+    # STEP 4: discretize the image data into 12 boxes (3 rows, 4 columns)
+    discretized_PIV = discretize_image(normalized_PIV, rows=3, columns=4, type="PIV")
+    discretized_PLIF = discretize_image(normalized_PLIF, rows=3, columns=4, type="PLIF")
 
     return discretized_PIV, discretized_PLIF
 
@@ -270,8 +288,9 @@ def discretize_image(image: np.ndarray, rows: int, columns: int, type: str):
 
 def show_box_PIV(image: np.ndarray, dimension: int, rows: int, columns: int):
 
+    vmin = 0.0
+    vmax = 1.0
     plt.figure(figsize=(16, 12))
-    norm = mpl.colors.Normalize(vmin=0.0, vmax=1.0)
 
     # i, j denotes the row and column of this box, respectively
     for j in range(rows):
@@ -289,36 +308,34 @@ def show_box_PIV(image: np.ndarray, dimension: int, rows: int, columns: int):
                 exit()
 
             plt.imshow(image[j * columns + i][dimension - 1][:][:], cmap='turbo',
-                       origin='lower', interpolation='bicubic')
-            sm = plt.cm.ScalarMappable(norm=norm)
-            sm.set_array([])
-            plt.colorbar()
+                       origin='lower', interpolation='bicubic', vmin=vmin, vmax=vmax)
+            plt.colorbar(ticks=np.arange(vmin, vmax+0.1, 0.1))
 
     plt.show()
 
 
 def show_box_PLIF(image: np.ndarray, rows: int, columns: int):
 
+    vmin = 0.0
+    vmax = 1.0
     plt.figure(figsize=(16, 12))
-    norm = mpl.colors.Normalize(vmin=0.0, vmax=1.0)
 
     # i, j denotes the row and column of this box, respectively
     for j in range(rows):
         for i in range(columns):
             plt.subplot(3, 4, (rows - 1 - j) * columns + i + 1)
             plt.title(f'The box {(rows - 1 - j) * columns + i + 1} of PLIF image')
-            plt.imshow(image[j * columns + i][:][:], cmap='hot',
-                       origin='lower', interpolation='bicubic')
-            sm = plt.cm.ScalarMappable(norm=norm)
-            sm.set_array([])
-            plt.colorbar()
+            plt.imshow(image[j * columns + i][:][:], cmap='hot', origin='lower',
+                       interpolation='bicubic', vmin=vmin, vmax=vmax)
+            plt.colorbar(ticks=np.arange(vmin, vmax+0.1, 0.1))
 
     plt.show()
 
 def show_PIV(image: np.ndarray, dimension: int):
 
+    vmin = 0.0
+    vmax = 1.0
     plt.figure(figsize=(16, 12))
-    norm = mpl.colors.Normalize(vmin=0.0, vmax=1.0)
 
     if dimension == 1:
         plt.title('The PIV-x image')
@@ -330,24 +347,22 @@ def show_PIV(image: np.ndarray, dimension: int):
         print("Error: the input dimension of PIV image is wrong.")
         exit()
 
-    plt.imshow(image[dimension-1][:][:], cmap='turbo', origin='lower', interpolation='bicubic')
-
-    sm = plt.cm.ScalarMappable(norm=norm)
-    sm.set_array([])
-    plt.colorbar()
+    plt.imshow(image[dimension-1][:][:], cmap='turbo', origin='lower', interpolation='bicubic',
+               vmin=vmin, vmax=vmax)
+    plt.colorbar(ticks=np.arange(vmin, vmax+0.1, 0.1))
 
     plt.show()
 
 def show_PLIF(image: np.ndarray):
 
+    vmin = 0.0
+    vmax = 1.0
     plt.figure(figsize=(16, 12))
-    norm = mpl.colors.Normalize(vmin=0.0, vmax=1.0)
 
     plt.title('The PLIF image')
-    plt.imshow(image, cmap='hot', origin='lower', interpolation='bicubic')
+    plt.imshow(image, cmap='hot', origin='lower', interpolation='bicubic',
+               vmin=vmin, vmax=vmax)
 
-    sm = plt.cm.ScalarMappable(norm=norm)
-    sm.set_array([])
-    plt.colorbar()
+    plt.colorbar(ticks=np.arange(vmin, vmax+0.1, 0.1))
 
     plt.show()
