@@ -27,11 +27,12 @@ device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cp
 print(f"Selected device: {device}")
 
 # 2. define the parameters for training the model
-batch_size = 50
+batch_size = 100
 rows = 3
 columns = 4
 img_num = 0
-EPOCHS = 20
+EPOCHS = 100
+lr = 0.0001
 if_existing = False # a flag recording if there is an existing fullyCNN model
 
 # 3. provide filenames of PIV, PLIF data
@@ -164,7 +165,7 @@ if if_existing == True:
         np.append(validation_loss_records, np.load('./result/validation_loss_records.npy'))
 
     best_loss = validation_loss_records.min()
-    print("Load the existing loss records.")
+    print(f"Load the existing loss records, and current best loss is {best_loss}.")
 
 else:
     print("No existing loss records, start recording from the beginning.")
@@ -173,7 +174,7 @@ else:
 loss_fn = nn.MSELoss()
 torch.manual_seed(0)
 
-optimizer = torch.optim.Adam(fullyCNN.parameters(), lr=0.001)
+optimizer = torch.optim.Adam(fullyCNN.parameters(), lr=lr, weight_decay=1e-05)
 
 # PART 4: the looping process of training the model
 # NOTE: the test file takes PIV-x (dimension-0) as an example
