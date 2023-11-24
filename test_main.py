@@ -11,6 +11,7 @@ from globalCNN.validate import validate_epoch
 from preprocess_dataset import preprocess_data, preprocess_old_data, show_image, MyDataset, \
                                show_box_PIV, show_box_PLIF
 from globalCNN.neural_net import FullyCNN
+from result_visualiser import show_loss
 
 """
 This file is used for testing the whole process of training the model.
@@ -203,3 +204,7 @@ loss_records = {
     'train_loss_records': train_loss_records,
     'validation_loss_records': validation_loss_records
 }
+
+# PART 5: show the results
+# 5.1. show the loss records of the whole training process
+show_loss(loss_records, "fullyCNN_loss.png")
