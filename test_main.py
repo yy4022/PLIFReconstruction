@@ -30,7 +30,8 @@ batch_size = 50
 rows = 3
 columns = 4
 img_num = 0
-EPOCHS = 100
+EPOCHS = 20
+if_existing = False # a flag recording if there is an existing fullyCNN model
 
 # 3. provide filenames of PIV, PLIF data
 file1_PIV = str('data/Attached state/D1F1_air240_PIV_1001to2000.mat') # attached-1000
@@ -133,6 +134,9 @@ fullyCNN = FullyCNN()
 # check if there is an existing model
 if os.path.exists('./model/fullyCNN.pt'):
     fullyCNN = torch.load('./model/fullyCNN.pt')
+
+    # set the if_existing flag
+    if_existing = True
     print("Load the existing fullyCNN model, then continue training.")
 else:
     print("No existing fullyCNN model, so create a new one.")
@@ -141,12 +145,28 @@ fullyCNN = fullyCNN.to(device)
 input_shape = (1, 124, 93)
 summary(fullyCNN, input_shape)
 
-# 2. create a numpy array for recording the loss
+# 2. create a numpy array for recording the loss,
+#   and set the best (validation) loss for updating the model
 train_loss_records = []
 validation_loss_records = []
 
 train_loss_records = np.array(train_loss_records)
 validation_loss_records = np.array(validation_loss_records)
+
+best_loss = 10.0
+
+if if_existing == True:
+    train_loss_records = \
+        np.append(train_loss_records, np.load('./result/train_loss_records.npy'))
+
+    validation_loss_records = \
+        np.append(validation_loss_records, np.load('./result/validation_loss_records.npy'))
+
+    best_loss = validation_loss_records.min()
+    print("Load the existing loss records.")
+
+else:
+    print("No existing loss records, start recording from the beginning.")
 
 # 3. define the loss function and the optimizer
 loss_fn = nn.MSELoss()
@@ -155,8 +175,6 @@ torch.manual_seed(0)
 optimizer = torch.optim.Adam(fullyCNN.parameters(), lr=0.001)
 
 # PART 4: the looping process of training the model
-best_loss = 1000.0 # the validation loss
-
 # NOTE: the test file takes PIV-x (dimension-0) as an example
 for epoch in range(EPOCHS):
 
@@ -177,3 +195,11 @@ for epoch in range(EPOCHS):
         best_loss = validation_loss
         torch.save(fullyCNN, './model/fullyCNN.pt')
 
+# save loss records of training and validation process
+np.save("./result/train_loss_records.npy", train_loss_records)
+np.save("./result/validation_loss_records.npy", validation_loss_records)
+
+loss_records = {
+    'train_loss_records': train_loss_records,
+    'validation_loss_records': validation_loss_records
+}
