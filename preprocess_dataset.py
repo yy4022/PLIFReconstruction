@@ -209,10 +209,6 @@ def preprocess_old_data(file_PIV: str, file_PLIF: str) \
     cropped_PIV = dataset_PIV[:, :, indices_PIV_y[:, np.newaxis], indices_PIV_x]
     cropped_PLIF = dataset_PLIF[:, indices_PLIF_y[:, np.newaxis], indices_PLIF_x]
 
-    # 4. change the type of dataset from 'float64' to 'float32'
-    cropped_PIV = cropped_PIV.astype('float32')
-    cropped_PLIF = cropped_PLIF.astype('float32')
-
     # STEP 3: normalize the image data via min-max scaling method
     normalized_PIV = min_max_scaler(cropped_PIV)
     normalized_PLIF = min_max_scaler(cropped_PLIF)
@@ -220,6 +216,10 @@ def preprocess_old_data(file_PIV: str, file_PLIF: str) \
     # STEP 4: discretize the image data into 12 boxes (3 rows, 4 columns)
     discretized_PIV = discretize_image(normalized_PIV, rows=3, columns=4, type="PIV")
     discretized_PLIF = discretize_image(normalized_PLIF, rows=3, columns=4, type="PLIF")
+
+    # STEP 5. change the type of dataset from 'float64' to 'float32'
+    discretized_PIV = discretized_PIV.astype('float32')
+    discretized_PLIF = discretized_PLIF.astype('float32')
 
     return discretized_PIV, discretized_PLIF
 

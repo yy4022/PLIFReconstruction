@@ -5,6 +5,7 @@ from torch.utils.data import DataLoader
 from torchsummary import summary
 
 from globalCNN.train import train_epoch
+from globalCNN.validate import validate_epoch
 from preprocess_dataset import preprocess_data, preprocess_old_data, show_image, MyDataset, \
                                show_box_PIV, show_box_PLIF
 from globalCNN.neural_net import FullyCNN
@@ -85,14 +86,14 @@ PIV_x_attached_data_split = np.split(PIV_x_attached_data, attached_split_points,
 PLIF_attached_data_split = np.split(PLIF_attached_data, attached_split_points, axis=0)
 
 # 4.4. obtain the training, validation, training sets
-training_x_PIV_data = PIV_x_attached_data_split[0]
-training_PLIF_data = PLIF_attached_data_split[0]
+training_x_PIV_data = np.expand_dims(PIV_x_attached_data_split[0], axis=1)
+training_PLIF_data = np.expand_dims(PLIF_attached_data_split[0], axis=1)
 
-validation_x_PIV_data = PIV_x_attached_data_split[1]
-validation_PLIF_data = PLIF_attached_data_split[1]
+validation_x_PIV_data = np.expand_dims(PIV_x_attached_data_split[1], axis=1)
+validation_PLIF_data = np.expand_dims(PLIF_attached_data_split[1], axis=1)
 
-testing_x_PIV_data = PIV_x_attached_data_split[2]
-testing_PLIF_data = PLIF_attached_data_split[2]
+testing_x_PIV_data = np.expand_dims(PIV_x_attached_data_split[2], axis=1)
+testing_PLIF_data = np.expand_dims(PLIF_attached_data_split[2], axis=1)
 
 print(np.shape(training_x_PIV_data))
 print(np.shape(training_PLIF_data))
@@ -122,30 +123,47 @@ validation_PLIF_loader = DataLoader(dataset=validation_PLIF_data, batch_size=bat
 
 testing_x_PIV_loader = DataLoader(dataset=testing_x_PIV_data, batch_size=batch_size, shuffle=False)
 testing_PLIF_loader = DataLoader(dataset=testing_PLIF_data, batch_size=batch_size, shuffle=False)
-#
-# # PART 3: preparation before training the model
-# # 1. define the FullyCNN model
-# fullyCNN = FullyCNN()
-# fullyCNN = fullyCNN.to(device)
-# input_shape = (1, 124, 93)
-# summary(fullyCNN, input_shape)
-#
-# # 2. create a numpy array for recording the loss
-# train_loss_records = []
-# validation_loss_records = []
-#
-# train_loss_records = np.array(train_loss_records)
-# validation_loss_records = np.array(validation_loss_records)
-#
-# # 3. define the loss function and the optimizer
-# loss_fn = nn.MSELoss()
-# torch.manual_seed(0)
-#
-# optimizer = torch.optim.Adam(fullyCNN.parameters(), lr=0.001)
-#
-# # PART 4: the looping process of training the model
-# # NOTE: the test file takes PIV-x (dimension-0) as an example
-# for epoch in range(EPOCHS):
-#
-#     train_loss = train_epoch(fullyCNN, device)
+
+# PART 3: preparation before training the model
+# 1. define the FullyCNN model
+fullyCNN = FullyCNN()
+fullyCNN = fullyCNN.to(device)
+input_shape = (1, 124, 93)
+summary(fullyCNN, input_shape)
+
+# 2. create a numpy array for recording the loss
+train_loss_records = []
+validation_loss_records = []
+
+train_loss_records = np.array(train_loss_records)
+validation_loss_records = np.array(validation_loss_records)
+
+# 3. define the loss function and the optimizer
+loss_fn = nn.MSELoss()
+torch.manual_seed(0)
+
+optimizer = torch.optim.Adam(fullyCNN.parameters(), lr=0.001)
+
+# PART 4: the looping process of training the model
+best_loss = 1000.0 # the validation loss
+
+# NOTE: the test file takes PIV-x (dimension-0) as an example
+for epoch in range(EPOCHS):
+
+    train_loss = train_epoch(fullyCNN=fullyCNN, device=device, dataloader_in=training_PLIF_loader,
+                             dataloader_out=training_x_PIV_loader, loss_fn=loss_fn, optimizer=optimizer)
+
+    validation_loss = validate_epoch(fullyCNN=fullyCNN, device=device, dataloader_in=validation_PLIF_loader,
+                                     dataloader_out=validation_x_PIV_loader, loss_fn=loss_fn)
+
+    print(
+        '\n EPOCH {}/{} \t train loss {} \t validate loss {}'.format(epoch + 1, EPOCHS, train_loss,
+                                                                     validation_loss))
+
+    train_loss_records = np.append(train_loss_records, train_loss)
+    validation_loss_records = np.append(validation_loss_records, validation_loss)
+
+    if validation_loss < best_loss:
+        best_loss = validation_loss
+        torch.save(fullyCNN, './model/fullyCNN.pt')
 
