@@ -1,3 +1,5 @@
+import os.path
+
 import numpy as np
 import torch
 from torch import nn
@@ -95,14 +97,14 @@ validation_PLIF_data = np.expand_dims(PLIF_attached_data_split[1], axis=1)
 testing_x_PIV_data = np.expand_dims(PIV_x_attached_data_split[2], axis=1)
 testing_PLIF_data = np.expand_dims(PLIF_attached_data_split[2], axis=1)
 
-print(np.shape(training_x_PIV_data))
-print(np.shape(training_PLIF_data))
-
-print(np.shape(validation_x_PIV_data))
-print(np.shape(validation_PLIF_data))
-
-print(np.shape(testing_x_PIV_data))
-print(np.shape(testing_PLIF_data))
+# print(np.shape(training_x_PIV_data))
+# print(np.shape(training_PLIF_data))
+#
+# print(np.shape(validation_x_PIV_data))
+# print(np.shape(validation_PLIF_data))
+#
+# print(np.shape(testing_x_PIV_data))
+# print(np.shape(testing_PLIF_data))
 
 # 4.5. create the corresponding datasets
 training_x_PIV_data = MyDataset(training_x_PIV_data)
@@ -127,6 +129,14 @@ testing_PLIF_loader = DataLoader(dataset=testing_PLIF_data, batch_size=batch_siz
 # PART 3: preparation before training the model
 # 1. define the FullyCNN model
 fullyCNN = FullyCNN()
+
+# check if there is an existing model
+if os.path.exists('./model/fullyCNN.pt'):
+    fullyCNN = torch.load('./model/fullyCNN.pt')
+    print("Load the existing fullyCNN model, then continue training.")
+else:
+    print("No existing fullyCNN model, so create a new one.")
+
 fullyCNN = fullyCNN.to(device)
 input_shape = (1, 124, 93)
 summary(fullyCNN, input_shape)
