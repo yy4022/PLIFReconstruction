@@ -21,4 +21,6 @@ def fullyCNN_predict(fullyCNN: nn.Module, device: torch.device, dataloader_in):
 
             predicted_output.append(predicted_data)
 
-        return predicted_output
+        predicted_output = torch.cat(predicted_output)
+
+    return predicted_output

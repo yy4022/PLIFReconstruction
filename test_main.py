@@ -82,7 +82,6 @@ PIV_z_data2 = preprocess_old_data(cropped_PIV_data2[2, :, :, :], min_PIV_z, max_
 # show_box_PLIF(PLIF_data1[:, img_num, :, :], rows=rows, columns=columns)
 
 # 2. concatenate the datasets as required
-
 PIV_x_attached_data = np.concatenate((PIV_x_data1, PIV_x_data2), axis=1) # attached-2000
 PLIF_attached_data = np.concatenate((PLIF_data1, PLIF_data2), axis=1)
 
@@ -132,24 +131,24 @@ testing_PLIF_data = np.expand_dims(PLIF_attached_data_split[2], axis=1)
 # print(np.shape(testing_PLIF_data))
 
 # 4.5. create the corresponding datasets
-training_x_PIV_data = MyDataset(training_x_PIV_data)
-training_PLIF_data = MyDataset(training_PLIF_data)
+training_x_PIV_dataset = MyDataset(training_x_PIV_data)
+training_PLIF_dataset = MyDataset(training_PLIF_data)
 
-validation_x_PIV_data = MyDataset(validation_x_PIV_data)
-validation_PLIF_data = MyDataset(validation_PLIF_data)
+validation_x_PIV_dataset = MyDataset(validation_x_PIV_data)
+validation_PLIF_dataset = MyDataset(validation_PLIF_data)
 
-testing_x_PIV_data = MyDataset(testing_x_PIV_data)
-testing_PLIF_data = MyDataset(testing_PLIF_data)
+testing_x_PIV_dataset = MyDataset(testing_x_PIV_data)
+testing_PLIF_dataset = MyDataset(testing_PLIF_data)
 
 # 4.6. create the corresponding dataloaders
-training_x_PIV_loader = DataLoader(dataset=training_x_PIV_data, batch_size=batch_size, shuffle=False)
-training_PLIF_loader = DataLoader(dataset=training_PLIF_data, batch_size=batch_size, shuffle=False)
+training_x_PIV_loader = DataLoader(dataset=training_x_PIV_dataset, batch_size=batch_size, shuffle=False)
+training_PLIF_loader = DataLoader(dataset=training_PLIF_dataset, batch_size=batch_size, shuffle=False)
 
-validation_x_PIV_loader = DataLoader(dataset=validation_x_PIV_data, batch_size=batch_size, shuffle=False)
-validation_PLIF_loader = DataLoader(dataset=validation_PLIF_data, batch_size=batch_size, shuffle=False)
+validation_x_PIV_loader = DataLoader(dataset=validation_x_PIV_dataset, batch_size=batch_size, shuffle=False)
+validation_PLIF_loader = DataLoader(dataset=validation_PLIF_dataset, batch_size=batch_size, shuffle=False)
 
-testing_x_PIV_loader = DataLoader(dataset=testing_x_PIV_data, batch_size=batch_size, shuffle=False)
-testing_PLIF_loader = DataLoader(dataset=testing_PLIF_data, batch_size=batch_size, shuffle=False)
+testing_x_PIV_loader = DataLoader(dataset=testing_x_PIV_dataset, batch_size=batch_size, shuffle=False)
+testing_PLIF_loader = DataLoader(dataset=testing_PLIF_dataset, batch_size=batch_size, shuffle=False)
 
 # PART 3: preparation before training the model
 # 1. define the FullyCNN model
