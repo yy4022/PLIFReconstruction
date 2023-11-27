@@ -25,19 +25,10 @@ class MyDataset(Dataset):
         return self.img_data[index]
 
 
-def min_max_scaler(data: np.ndarray) -> np.ndarray:
+def min_max_scaler(data: np.ndarray, min_value: float, max_value: float) -> np.ndarray:
 
-    """
-    Internal Function:
-    use min-max scaling to the given numpy array
-    :param data: a numpy array containing the data to be scaled.
-    :return: a numpy array of the same shape of 'data',
-            but scaled its elements lie in the range [0, 1].
-    """
-
-    min_value = np.amin(data)
-    max_value = np.amax(data)
-    return (data - min_value) / (max_value - min_value)
+    normalized_data = (data - min_value) / (max_value - min_value)
+    return normalized_data
 
 def show_image(PIV_image: np.ndarray, PLIF_image: np.ndarray,
                xmin: float, xmax: float, ymin: float, ymax: float) -> None:
@@ -154,8 +145,7 @@ def preprocess_data(file_PIV: str, file_PLIF: str) \
 
     return cropped_PIV, cropped_PLIF, cropped_xmin, cropped_xmax, cropped_ymin, cropped_ymax
 
-
-def preprocess_old_data(file_PIV: str, file_PLIF: str) \
+def crop_old_data(file_PIV: str, file_PLIF: str) \
         -> Tuple[np.ndarray, np.ndarray]:
 
     """
@@ -209,31 +199,27 @@ def preprocess_old_data(file_PIV: str, file_PLIF: str) \
     cropped_PIV = dataset_PIV[:, :, indices_PIV_y[:, np.newaxis], indices_PIV_x]
     cropped_PLIF = dataset_PLIF[:, indices_PLIF_y[:, np.newaxis], indices_PLIF_x]
 
-    # STEP 3: normalize the image data via min-max scaling method
-    normalized_PIV = min_max_scaler(cropped_PIV)
-    normalized_PLIF = min_max_scaler(cropped_PLIF)
+    # # STEP3: change the type of dataset from 'float64' to 'float32'
+    # cropped_PIV = cropped_PIV.astype('float32')
+    # cropped_PLIF = cropped_PLIF.astype('float32')
 
-    # STEP 4: discretize the image data into 12 boxes (3 rows, 4 columns)
-    discretized_PIV = discretize_image(normalized_PIV, rows=3, columns=4, type="PIV")
-    discretized_PLIF = discretize_image(normalized_PLIF, rows=3, columns=4, type="PLIF")
+    return cropped_PIV, cropped_PLIF
 
-    # STEP 5. change the type of dataset from 'float64' to 'float32'
-    discretized_PIV = discretized_PIV.astype('float32')
-    discretized_PLIF = discretized_PLIF.astype('float32')
+def preprocess_old_data(cropped_data: np.ndarray, min_value: float, max_value: float) \
+        -> Tuple[np.ndarray, np.ndarray]:
 
-    return discretized_PIV, discretized_PLIF
+    # STEP 1: normalize the image data via min-max scaling method
+    normalized_data = min_max_scaler(cropped_data, min_value, max_value)
 
-def discretize_image(image: np.ndarray, rows: int, columns: int, type: str):
+    # STEP 2: discretize the image data into 12 boxes (3 rows, 4 columns)
+    discretized_data = discretize_image(normalized_data, rows=3, columns=4)
 
-    """
-    Internal Function:
-        discretize the image into rows * columns boxes
-    :param image: a numpy array representing the data of PIV or PLIF image
-    :param rows: an int representing the rows of the discretized image
-    :param columns: an int representing the columns of the discretized image
-    :param type: a string representing the type of image (PIV or PLIF)
-    :return: a numpy array denotes the discretized image with rows * columns boxes
-    """
+    # STEP 3: change the type of dataset from 'float64' to 'float32'
+    discretized_data = discretized_data.astype('float32')
+
+    return discretized_data
+
+def discretize_image(image: np.ndarray, rows: int, columns: int):
 
     # STEP 1: get the size of x (last dimension) and y (second last dimension)
     x_size = image.shape[-1]
@@ -245,46 +231,17 @@ def discretize_image(image: np.ndarray, rows: int, columns: int, type: str):
     x_range = math.floor(x_size / columns)
     y_range = math.floor(y_size / rows)
 
-    if type == "PIV":
+    discretized_image = np.zeros((rows * columns, image_num, y_range, x_range))
 
-        # The comment part is used for checking the discretized PIV image
-        # show_PIV(image[:, img_num, :, :], dimension=1)
-        # show_PIV(image[:, img_num, :, :], dimension=2)
-        # show_PIV(image[:, img_num, :, :], dimension=3)
+    for j in range(rows):
+        for i in range(columns):
+            start_x = i * x_range
+            end_x = (i + 1) * x_range
+            start_y = j * y_range
+            end_y = (j + 1) * y_range
 
-        channels = image.shape[0]
-        discretized_image = np.zeros((rows * columns, channels, image_num, y_range, x_range))
-
-        for j in range(rows):
-            for i in range(columns):
-                start_x = i * x_range
-                end_x = (i + 1) * x_range
-                start_y = j * y_range
-                end_y = (j + 1) * y_range
-
-                box = image[:, :, start_y:end_y, start_x:end_x]
-                discretized_image[j * columns + i, :, :, :, :] = box
-
-    elif type == "PLIF":
-
-        # The comment part is used for checking the discretized PLIF image
-        # show_PLIF(image[img_num, :, :])
-
-        discretized_image = np.zeros((rows * columns, image_num, y_range, x_range))
-
-        for j in range(rows):
-            for i in range(columns):
-                start_x = i * x_range
-                end_x = (i + 1) * x_range
-                start_y = j * y_range
-                end_y = (j + 1) * y_range
-
-                box = image[:, start_y:end_y, start_x:end_x]
-                discretized_image[j * columns + i, :, :, :] = box
-
-    else:
-        print("Error: the image type is neither PIV nor PLIF.")
-        exit()
+            box = image[:, start_y:end_y, start_x:end_x]
+            discretized_image[j * columns + i, :, :, :] = box
 
     return discretized_image
 

@@ -9,7 +9,7 @@ from torchsummary import summary
 from globalCNN.train import train_epoch
 from globalCNN.validate import validate_epoch
 from preprocess_dataset import preprocess_data, preprocess_old_data, show_image, MyDataset, \
-                               show_box_PIV, show_box_PLIF
+    show_box_PIV, show_box_PLIF, crop_old_data
 from globalCNN.neural_net import FullyCNN
 from result_visualiser import show_loss
 
@@ -31,7 +31,7 @@ batch_size = 100
 rows = 3
 columns = 4
 img_num = 0
-EPOCHS = 100
+EPOCHS = 1000
 lr = 0.0001
 if_existing = False # a flag recording if there is an existing fullyCNN model
 
@@ -43,23 +43,45 @@ file2_PLIF = str('data/Attached state/D1F1_air240_PLIF_2001to3000.mat')
 
 # PART 2: preprocess the datasets
 # 1. preprocess the datasets, then return the cropped datasets
-PIV_data1, PLIF_data1 = preprocess_old_data(file1_PIV, file1_PLIF)[:2]
-PIV_data2, PLIF_data2 = preprocess_old_data(file2_PIV, file2_PLIF)[:2]
+cropped_PIV_data1, cropped_PLIF_data1 = crop_old_data(file1_PIV, file1_PLIF)
+cropped_PIV_data2, cropped_PLIF_data2 = crop_old_data(file2_PIV, file2_PLIF)
 
-# print(np.shape(PIV_data1))
+# 2. get the min and max value for all PIV-x, y, z and PLIF datasets
+min_PLIF = min(np.amin(cropped_PLIF_data1), np.amin(cropped_PLIF_data2))
+max_PLIF = max(np.amax(cropped_PLIF_data1), np.amax(cropped_PLIF_data2))
+
+min_PIV_x = min(np.amin(cropped_PIV_data1[0, :, :, :]), np.amin(cropped_PIV_data2[0, :, :, :]))
+max_PIV_x = max(np.amax(cropped_PIV_data1[0, :, :, :]), np.amax(cropped_PIV_data2[0, :, :, :]))
+
+min_PIV_y = min(np.amin(cropped_PIV_data1[1, :, :, :]), np.amin(cropped_PIV_data2[1, :, :, :]))
+max_PIV_y = max(np.amax(cropped_PIV_data1[1, :, :, :]), np.amax(cropped_PIV_data2[1, :, :, :]))
+
+min_PIV_z = min(np.amin(cropped_PIV_data1[2, :, :, :]), np.amin(cropped_PIV_data2[2, :, :, :]))
+max_PIV_z = max(np.amax(cropped_PIV_data1[2, :, :, :]), np.amax(cropped_PIV_data2[2, :, :, :]))
+
+# 3. normalize and discretize the datasets according to the min, max values
+PLIF_data1 = preprocess_old_data(cropped_PLIF_data1, min_PLIF, max_PLIF)
+PLIF_data2 = preprocess_old_data(cropped_PLIF_data2, min_PLIF, max_PLIF)
+
+PIV_x_data1 = preprocess_old_data(cropped_PIV_data1[0, :, :, :], min_PIV_x, max_PIV_x)
+PIV_x_data2 = preprocess_old_data(cropped_PIV_data2[0, :, :, :], min_PIV_x, max_PIV_x)
+
+PIV_y_data1 = preprocess_old_data(cropped_PIV_data1[1, :, :, :], min_PIV_y, max_PIV_y)
+PIV_y_data2 = preprocess_old_data(cropped_PIV_data2[1, :, :, :], min_PIV_y, max_PIV_y)
+
+PIV_z_data1 = preprocess_old_data(cropped_PIV_data1[2, :, :, :], min_PIV_z, max_PIV_z)
+PIV_z_data2 = preprocess_old_data(cropped_PIV_data2[2, :, :, :], min_PIV_z, max_PIV_z)
+
 # print(np.shape(PLIF_data1))
-#
-# print(np.shape(PIV_data1[:, :, img_num, :, :]))
-# print(np.shape(PLIF_data1[:, img_num, :, :]))
+# print(np.shape(PIV_x_data1))
 
-# show_box_PIV(PIV_data1[:, :, img_num, :, :], dimension=1, rows=rows, columns=columns) # x-axis
-# show_box_PIV(PIV_data1[:, :, img_num, :, :], dimension=2, rows=rows, columns=columns) # y-axis
+# print(min_PLIF, min_PIV_x, min_PIV_y, min_PIV_z)
+# print(max_PLIF, max_PIV_x, max_PIV_y, max_PIV_z)
+
 # show_box_PIV(PIV_data1[:, :, img_num, :, :], dimension=3, rows=rows, columns=columns) # z-axis
 # show_box_PLIF(PLIF_data1[:, img_num, :, :], rows=rows, columns=columns)
 
 # 2. concatenate the datasets as required
-PIV_x_data1 = PIV_data1[:, 0, :, :, :]
-PIV_x_data2 = PIV_data2[:, 0, :, :, :]
 
 PIV_x_attached_data = np.concatenate((PIV_x_data1, PIV_x_data2), axis=1) # attached-2000
 PLIF_attached_data = np.concatenate((PLIF_data1, PLIF_data2), axis=1)
