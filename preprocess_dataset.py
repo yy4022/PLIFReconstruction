@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Tuple, List
 
 import h5py
 import numpy as np
@@ -144,6 +144,95 @@ def preprocess_data(file_PIV: str, file_PLIF: str) \
     cropped_PLIF = cropped_PLIF.astype('float32')
 
     return cropped_PIV, cropped_PLIF, cropped_xmin, cropped_xmax, cropped_ymin, cropped_ymax
+
+# Internal Function
+def crop_data(image_data: np.ndarray, x_axis: np.ndarray, y_axis: np.ndarray)\
+        -> np.ndarray:
+
+    # STEP 1. define the range of x, y
+    cropped_xmin = -15
+    cropped_ymin = 0
+    cropped_xmax = 15
+    cropped_ymax = 30
+
+    # STEP 2. get the indices satisfied the range
+    indices_x = np.where((x_axis >= cropped_xmin) & (x_axis <= cropped_xmax))[0]
+    indices_y = np.where((y_axis >= cropped_ymin) & (y_axis <= cropped_ymax))[0]
+
+    # STEP 3. crop the dataset via the range
+    cropped_data = image_data[:, indices_y[:, np.newaxis], indices_x]
+
+    # # STEP3: change the type of dataset from 'float64' to 'float32'
+    # cropped_PIV = cropped_PIV.astype('float32')
+    # cropped_PLIF = cropped_PLIF.astype('float32')
+
+    return cropped_data
+
+
+def crop_old_PIVdata(files_PIV: List[str])\
+        -> Tuple[List[np.ndarray], List[np.ndarray], List[np.ndarray]]:
+
+    cropped_PIV_x_data = []
+    cropped_PIV_y_data = []
+    cropped_PIV_z_data = []
+
+    # loop to obtain the cropped PIV datasets
+    for file_PIV in files_PIV:
+        # STEP 1: load the PIV dataset
+        PIV_information = scipy.io.loadmat(file_PIV)
+
+        # 1.1. read the PIV dataset from the file
+        dataset_PIV = PIV_information['PIV']['velfield'][:]
+        dataset_PIV = np.concatenate([np.concatenate(sublist) for sublist in dataset_PIV])
+        dataset_PIV = np.transpose(dataset_PIV)
+
+        # 1.2. read the PIV x-axis
+        PIV_x_axis = PIV_information['PIV']['x'][:]
+        PIV_x_axis = np.concatenate([np.concatenate(sublist) for sublist in PIV_x_axis])
+        PIV_x_axis = np.transpose(PIV_x_axis)
+
+        # 1.3. read the PIV y-axis
+        PIV_y_axis = PIV_information['PIV']['y'][:]
+        PIV_y_axis = np.transpose(np.concatenate([np.concatenate(sublist) for sublist in PIV_y_axis]))
+        # PIV_y = np.transpose(PIV_y)
+
+        # STEP 2: crop the PIV dataset
+        cropped_PIV_x = crop_data(image_data=dataset_PIV[0, :, :, :], x_axis=PIV_x_axis, y_axis=PIV_y_axis)
+        cropped_PIV_y = crop_data(image_data=dataset_PIV[1, :, :, :], x_axis=PIV_x_axis, y_axis=PIV_y_axis)
+        cropped_PIV_z = crop_data(image_data=dataset_PIV[2, :, :, :], x_axis=PIV_x_axis, y_axis=PIV_y_axis)
+
+        # STEP 3: append the dataset to the corresponding list
+        cropped_PIV_x_data.append(cropped_PIV_x)
+        cropped_PIV_y_data.append(cropped_PIV_y)
+        cropped_PIV_z_data.append(cropped_PIV_z)
+
+    return cropped_PIV_x_data, cropped_PIV_y_data, cropped_PIV_z_data
+
+def crop_old_PLIFdata(files_PLIF: List[str]) -> List[np.ndarray]:
+
+    cropped_PLIF_data = []
+
+    # loop to obtain the cropped PLIF datasets
+    for file_PLIF in files_PLIF:
+        # STEP 1: load the PLIF dataset
+        with h5py.File(file_PLIF, 'r') as file:
+            # get the PLIF numpy array
+            dataset_PLIF = file['PLIF']['OH'][:]
+
+            # get the x range of PLIF image with (504, 1)
+            PLIF_x_axis = file['PLIF']['x'][:]
+
+            # get the y range of PLIF image with (833, 1)
+            PLIF_y_axis = file['PLIF']['y'][:]
+
+        # STEP 2: crop the PLIF dataset
+        cropped_PLIF = crop_data(image_data=dataset_PLIF, x_axis=PLIF_x_axis, y_axis=PLIF_y_axis)
+
+        # STEP 3: append the dataset to the list
+        cropped_PLIF_data.append(cropped_PLIF)
+
+    return cropped_PLIF_data
+
 
 def crop_old_data(file_PIV: str, file_PLIF: str) \
         -> Tuple[np.ndarray, np.ndarray]:
