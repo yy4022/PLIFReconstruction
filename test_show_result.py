@@ -12,7 +12,7 @@ from globalCNN.validate import validate_epoch
 from preprocess_dataset import preprocess_data, preprocess_old_data, show_image, MyDataset, \
     show_box_PIV, show_box_PLIF, crop_old_data
 from globalCNN.neural_net import FullyCNN
-from result_visualiser import show_loss, show_difference
+from result_visualiser import show_loss, show_difference, show_comparison
 
 """
 This file is used for showing the results via the trained model.
@@ -32,7 +32,7 @@ print(f"Selected device: {device}")
 batch_size = 100
 rows = 3
 columns = 4
-img_num = 0
+img_num = 99
 EPOCHS = 1000
 lr = 0.0001
 if_existing = False # a flag recording if there is an existing fullyCNN model
@@ -193,27 +193,44 @@ test_loss = validate_epoch(fullyCNN=fullyCNN, device=device, dataloader_in=testi
                            dataloader_out=testing_x_PIV_loader, loss_fn=loss_fn)
 print(f"The MSE loss for the testing dataset is {test_loss}.")
 
-# 2. show the comparison of the results
+# 2. show the difference and comparison of the results of training data
 training_prediction = fullyCNN_predict(fullyCNN=fullyCNN, device=device, dataloader_in=training_PLIF_loader)
 training_prediction = training_prediction.cpu().data.numpy()
 training_prediction = training_prediction.reshape((boxes, training_nums, PIV_x_height, PIV_x_width))
 training_x_PIV_data = training_x_PIV_data.reshape((boxes, training_nums, PIV_x_height, PIV_x_width))
 training_difference = training_prediction - training_x_PIV_data
+
+show_comparison(prediction_data=training_prediction, actual_data=training_x_PIV_data,
+                prediction_filename="training_prediction.png", actual_filename="training_actual.png",
+                rows=rows, columns=columns, img_num=img_num)
+
 show_difference(difference=training_difference, filename="training_difference.png",
                 rows=rows, columns=columns, img_num=img_num)
 
+# 3. show the difference and comparison of the results of validation data
 validation_prediction = fullyCNN_predict(fullyCNN=fullyCNN, device=device, dataloader_in=validation_PLIF_loader)
 validation_prediction = validation_prediction.cpu().data.numpy()
 validation_prediction = validation_prediction.reshape((boxes, validation_nums, PIV_x_height, PIV_x_width))
 validation_x_PIV_data = validation_x_PIV_data.reshape((boxes, validation_nums, PIV_x_height, PIV_x_width))
 validation_difference = validation_prediction - validation_x_PIV_data
+
+show_comparison(prediction_data=validation_prediction, actual_data=validation_x_PIV_data,
+                prediction_filename="validation_prediction.png", actual_filename="validation_actual.png",
+                rows=rows, columns=columns, img_num=img_num)
+
 show_difference(difference=validation_difference, filename="validataion_difference.png",
                 rows=rows, columns=columns, img_num=img_num)
 
+# 4. show the difference and comparison of the results of testing data
 testing_prediction = fullyCNN_predict(fullyCNN=fullyCNN, device=device, dataloader_in=testing_PLIF_loader)
 testing_prediction = testing_prediction.cpu().data.numpy()
 testing_prediction = testing_prediction.reshape((boxes, testing_nums, PIV_x_height, PIV_x_width))
 testing_x_PIV_data = testing_x_PIV_data.reshape((boxes, testing_nums, PIV_x_height, PIV_x_width))
 testing_difference = testing_prediction - testing_x_PIV_data
+
+show_comparison(prediction_data=testing_prediction, actual_data=testing_x_PIV_data,
+                prediction_filename="testing_prediction.png", actual_filename="testing_actual.png",
+                rows=rows, columns=columns, img_num=img_num)
+
 show_difference(difference=testing_difference, filename="testing_difference.png",
                 rows=rows, columns=columns, img_num=img_num)
