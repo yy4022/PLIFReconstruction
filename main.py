@@ -9,7 +9,7 @@ from torchsummary import summary
 from fullyCNN.train import train_epoch
 from fullyCNN.validate import validate_epoch
 from preprocess_dataset import preprocess_data, preprocess_old_data, show_image, MyDataset, \
-    show_box_PIV, show_box_PLIF, crop_old_data, crop_old_PIVdata, crop_old_PLIFdata
+    show_box_PIV, show_box_PLIF, crop_old_PIVdata, crop_old_PLIFdata, get_min_max
 from fullyCNN.neural_net import FullyCNN
 from result_visualiser import show_loss
 
@@ -47,20 +47,13 @@ files_PLIF = ['data/Attached state/D1F1_air240_PLIF_1001to2000.mat',
 # 1. preprocess the datasets, then return the cropped datasets
 cropped_PLIF_data = crop_old_PLIFdata(files_PLIF)
 cropped_PIV_x_data, cropped_PIV_y_data, cropped_PIV_z_data = crop_old_PIVdata(files_PIV)
-#
-# # 2. get the min and max value for all PIV-x, y, z and PLIF datasets
-# min_PLIF = min(np.amin(cropped_PLIF_data1), np.amin(cropped_PLIF_data2))
-# max_PLIF = max(np.amax(cropped_PLIF_data1), np.amax(cropped_PLIF_data2))
-#
-# min_PIV_x = min(np.amin(cropped_PIV_data1[0, :, :, :]), np.amin(cropped_PIV_data2[0, :, :, :]))
-# max_PIV_x = max(np.amax(cropped_PIV_data1[0, :, :, :]), np.amax(cropped_PIV_data2[0, :, :, :]))
-#
-# min_PIV_y = min(np.amin(cropped_PIV_data1[1, :, :, :]), np.amin(cropped_PIV_data2[1, :, :, :]))
-# max_PIV_y = max(np.amax(cropped_PIV_data1[1, :, :, :]), np.amax(cropped_PIV_data2[1, :, :, :]))
-#
-# min_PIV_z = min(np.amin(cropped_PIV_data1[2, :, :, :]), np.amin(cropped_PIV_data2[2, :, :, :]))
-# max_PIV_z = max(np.amax(cropped_PIV_data1[2, :, :, :]), np.amax(cropped_PIV_data2[2, :, :, :]))
-#
+
+# 2. get the min and max value for all PIV-x, y, z and PLIF datasets
+min_PLIF, max_PLIF = get_min_max(cropped_PLIF_data)
+min_PIV_x, max_PIV_x = get_min_max(cropped_PIV_x_data)
+min_PIV_y, max_PIV_y = get_min_max(cropped_PIV_y_data)
+min_PIV_z, max_PIV_z = get_min_max(cropped_PIV_z_data)
+
 # # 3. normalize and discretize the datasets according to the min, max values
 # PLIF_data1 = preprocess_old_data(cropped_PLIF_data1, min_PLIF, max_PLIF)
 # PLIF_data2 = preprocess_old_data(cropped_PLIF_data2, min_PLIF, max_PLIF)

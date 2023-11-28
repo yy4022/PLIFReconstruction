@@ -24,7 +24,7 @@ class MyDataset(Dataset):
     def __getitem__(self, index):
         return self.img_data[index]
 
-
+# Internal Function
 def min_max_scaler(data: np.ndarray, min_value: float, max_value: float) -> np.ndarray:
 
     normalized_data = (data - min_value) / (max_value - min_value)
@@ -168,7 +168,6 @@ def crop_data(image_data: np.ndarray, x_axis: np.ndarray, y_axis: np.ndarray)\
 
     return cropped_data
 
-
 def crop_old_PIVdata(files_PIV: List[str])\
         -> Tuple[List[np.ndarray], List[np.ndarray], List[np.ndarray]]:
 
@@ -232,6 +231,21 @@ def crop_old_PLIFdata(files_PLIF: List[str]) -> List[np.ndarray]:
         cropped_PLIF_data.append(cropped_PLIF)
 
     return cropped_PLIF_data
+
+def get_min_max(data_list: List[np.ndarray]) -> Tuple[float, float]:
+
+    min_value = 1000
+    max_value = -1000
+
+    for data in data_list:
+        if np.amin(data) < min_value:
+            min_value = np.amin(data)
+
+        if np.amax(data) > max_value:
+            max_value = np.amax(data)
+
+    return min_value, max_value
+
 
 def preprocess_old_data(cropped_data: np.ndarray, min_value: float, max_value: float) \
         -> Tuple[np.ndarray, np.ndarray]:
