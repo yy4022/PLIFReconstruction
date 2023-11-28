@@ -15,7 +15,7 @@ from fullyCNN.neural_net import FullyCNN
 from result_visualiser import show_loss, show_difference, show_comparison
 
 """
-This file is used for showing the results via the trained model.
+This file is used for showing the results via the trained global model.
 NOTE: all datasets used in this file should not be shuffled.
 """
 

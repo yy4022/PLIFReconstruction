@@ -14,7 +14,7 @@ from fullyCNN.neural_net import FullyCNN
 from result_visualiser import show_loss
 
 """
-This file is used for testing the whole process of training the model.
+This file is used for testing the whole process of training the global model.
 NOTE: there is no need to use the testing datasets during the training process.
 """
 
