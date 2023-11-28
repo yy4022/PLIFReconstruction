@@ -6,12 +6,12 @@ from torch import nn
 from torch.utils.data import DataLoader
 from torchsummary import summary
 
-from globalCNN.predict import fullyCNN_predict
-from globalCNN.train import train_epoch
-from globalCNN.validate import validate_epoch
+from fullyCNN.predict import fullyCNN_predict
+from fullyCNN.train import train_epoch
+from fullyCNN.validate import validate_epoch
 from preprocess_dataset import preprocess_data, preprocess_old_data, show_image, MyDataset, \
     show_box_PIV, show_box_PLIF, crop_old_data
-from globalCNN.neural_net import FullyCNN
+from fullyCNN.neural_net import FullyCNN
 from result_visualiser import show_loss, show_difference, show_comparison
 
 """

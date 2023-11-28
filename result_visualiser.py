@@ -50,7 +50,7 @@ def show_comparison(prediction_data: np.ndarray, actual_data: np.ndarray, predic
     vmin = 0.0
     vmax = 1.0
     prediction_title = "The prediction data of PIV-x " + str(img_num)
-    actual_title = "The actual data of PIV-x" + str(img_num)
+    actual_title = "The actual data of PIV-x " + str(img_num)
 
     show_boxes_image(image_data=prediction_data[:, img_num, :, :], rows=rows, columns=columns,
                      vmin=vmin, vmax=vmax, filename=prediction_filename, title=prediction_title)
