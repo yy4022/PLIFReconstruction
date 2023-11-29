@@ -2,10 +2,8 @@ from typing import Tuple, List
 
 import h5py
 import numpy as np
-import matplotlib as mpl
 import scipy.io
 import math
-from matplotlib import pyplot as plt
 from torch.utils.data import Dataset
 
 """
@@ -29,6 +27,28 @@ def min_max_scaler(data: np.ndarray, min_value: float, max_value: float) -> np.n
 
     normalized_data = (data - min_value) / (max_value - min_value)
     return normalized_data
+
+# Internal Function
+def crop_data(image_data: np.ndarray, x_axis: np.ndarray, y_axis: np.ndarray) \
+        -> np.ndarray:
+
+    # STEP 1. define the range of x, y
+    cropped_xmin = -15
+    cropped_ymin = 0
+    cropped_xmax = 15
+    cropped_ymax = 30
+
+    # STEP 2. get the indices satisfied the range
+    indices_x = np.where((x_axis >= cropped_xmin) & (x_axis <= cropped_xmax))[0]
+    indices_y = np.where((y_axis >= cropped_ymin) & (y_axis <= cropped_ymax))[0]
+
+    # STEP 3. crop the dataset via the range
+    cropped_data = image_data[:, indices_y[:, np.newaxis], indices_x]
+
+    # STEP 4: change the type of dataset from 'float64' to 'float32'
+    cropped_data = cropped_data.astype('float32')
+
+    return cropped_data
 
 def preprocess_data(file_PIV: str, file_PLIF: str) \
         -> Tuple[np.ndarray, np.ndarray, float, float, float, float]:
@@ -92,27 +112,6 @@ def preprocess_data(file_PIV: str, file_PLIF: str) \
 
     return cropped_PIV, cropped_PLIF, cropped_xmin, cropped_xmax, cropped_ymin, cropped_ymax
 
-# Internal Function
-def crop_data(image_data: np.ndarray, x_axis: np.ndarray, y_axis: np.ndarray) \
-        -> np.ndarray:
-
-    # STEP 1. define the range of x, y
-    cropped_xmin = -15
-    cropped_ymin = 0
-    cropped_xmax = 15
-    cropped_ymax = 30
-
-    # STEP 2. get the indices satisfied the range
-    indices_x = np.where((x_axis >= cropped_xmin) & (x_axis <= cropped_xmax))[0]
-    indices_y = np.where((y_axis >= cropped_ymin) & (y_axis <= cropped_ymax))[0]
-
-    # STEP 3. crop the dataset via the range
-    cropped_data = image_data[:, indices_y[:, np.newaxis], indices_x]
-
-    # STEP 4: change the type of dataset from 'float64' to 'float32'
-    cropped_data = cropped_data.astype('float32')
-
-    return cropped_data
 
 def crop_old_PIVdata(files_PIV: List[str]) \
         -> Tuple[List[np.ndarray], List[np.ndarray], List[np.ndarray]]:
