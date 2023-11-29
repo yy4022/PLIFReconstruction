@@ -264,6 +264,7 @@ def preprocess_data_list(data_list: List[np.ndarray], min_value: float, max_valu
         discretized_data = discretized_data.astype('float32')
 
         # STEP 4: append the data to the data list
+        discretized_data_list.append(discretized_data)
 
     return discretized_data_list
 
@@ -293,6 +294,17 @@ def discretize_image(image: np.ndarray, rows: int, columns: int):
             discretized_image[j * columns + i, :, :, :] = box
 
     return discretized_image
+
+
+def concatenate_data(data_list: List[np.ndarray]) -> np.ndarray:
+
+    total_data = data_list[0]
+
+    for data in data_list[1:]:
+        total_data = np.concatenate((total_data, data), axis=1)
+
+    return total_data
+
 
 def show_box_PIV(image: np.ndarray, dimension: int, rows: int, columns: int):
 
