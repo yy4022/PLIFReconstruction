@@ -33,7 +33,7 @@ batch_size = 100
 rows = 3
 columns = 4
 img_num = 0
-EPOCHS = 1000
+EPOCHS = 10
 lr = 0.0001
 if_existing = False # a flag recording if there is an existing fullyCNN model
 

@@ -162,9 +162,8 @@ def crop_data(image_data: np.ndarray, x_axis: np.ndarray, y_axis: np.ndarray) \
     # STEP 3. crop the dataset via the range
     cropped_data = image_data[:, indices_y[:, np.newaxis], indices_x]
 
-    # # STEP3: change the type of dataset from 'float64' to 'float32'
-    # cropped_PIV = cropped_PIV.astype('float32')
-    # cropped_PLIF = cropped_PLIF.astype('float32')
+    # STEP 4: change the type of dataset from 'float64' to 'float32'
+    cropped_data = cropped_data.astype('float32')
 
     return cropped_data
 
