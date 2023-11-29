@@ -172,7 +172,9 @@ else:
 
 # 3. define the loss function and the optimizer
 loss_fn = nn.MSELoss()
+
 torch.manual_seed(0)
+torch.cuda.manual_seed_all(0)
 
 optimizer = torch.optim.Adam(fullyCNN.parameters(), lr=lr, weight_decay=1e-05)
 

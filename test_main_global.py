@@ -32,7 +32,7 @@ batch_size = 100
 rows = 3
 columns = 4
 img_num = 0
-EPOCHS = 10
+EPOCHS = 1000
 lr = 0.0001
 if_existing = False # a flag recording if there is an existing fullyCNN model
 
@@ -172,7 +172,9 @@ else:
 
 # 3. define the loss function and the optimizer
 loss_fn = nn.MSELoss()
+
 torch.manual_seed(0)
+torch.cuda.manual_seed_all(0)
 
 optimizer = torch.optim.Adam(fullyCNN.parameters(), lr=lr, weight_decay=1e-05)
 
