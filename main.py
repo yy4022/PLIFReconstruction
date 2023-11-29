@@ -8,8 +8,8 @@ from torchsummary import summary
 
 from fullyCNN.train import train_epoch
 from fullyCNN.validate import validate_epoch
-from preprocess_dataset import preprocess_data, preprocess_old_data, show_image, MyDataset, \
-    show_box_PIV, show_box_PLIF, crop_old_PIVdata, crop_old_PLIFdata, get_min_max
+from preprocess_dataset import preprocess_data, show_image, MyDataset, \
+    show_box_PIV, show_box_PLIF, crop_old_PIVdata, crop_old_PLIFdata, get_min_max, preprocess_data_list
 from fullyCNN.neural_net import FullyCNN
 from result_visualiser import show_loss
 
@@ -54,7 +54,12 @@ min_PIV_x, max_PIV_x = get_min_max(cropped_PIV_x_data)
 min_PIV_y, max_PIV_y = get_min_max(cropped_PIV_y_data)
 min_PIV_z, max_PIV_z = get_min_max(cropped_PIV_z_data)
 
-# # 3. normalize and discretize the datasets according to the min, max values
+# 3. normalize and discretize the datasets according to the min, max values
+PLIF_data = preprocess_data_list(cropped_PLIF_data, min_PLIF, max_PLIF)
+PIV_x_data = preprocess_data_list(cropped_PIV_x_data, min_PIV_x, max_PIV_x)
+PIV_y_data = preprocess_data_list(cropped_PIV_y_data, min_PIV_y, max_PIV_y)
+PIV_z_data = preprocess_data_list(cropped_PIV_z_data, min_PIV_z, max_PIV_z)
+
 # PLIF_data1 = preprocess_old_data(cropped_PLIF_data1, min_PLIF, max_PLIF)
 # PLIF_data2 = preprocess_old_data(cropped_PLIF_data2, min_PLIF, max_PLIF)
 #

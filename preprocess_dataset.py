@@ -146,7 +146,7 @@ def preprocess_data(file_PIV: str, file_PLIF: str) \
     return cropped_PIV, cropped_PLIF, cropped_xmin, cropped_xmax, cropped_ymin, cropped_ymax
 
 # Internal Function
-def crop_data(image_data: np.ndarray, x_axis: np.ndarray, y_axis: np.ndarray)\
+def crop_data(image_data: np.ndarray, x_axis: np.ndarray, y_axis: np.ndarray) \
         -> np.ndarray:
 
     # STEP 1. define the range of x, y
@@ -168,7 +168,7 @@ def crop_data(image_data: np.ndarray, x_axis: np.ndarray, y_axis: np.ndarray)\
 
     return cropped_data
 
-def crop_old_PIVdata(files_PIV: List[str])\
+def crop_old_PIVdata(files_PIV: List[str]) \
         -> Tuple[List[np.ndarray], List[np.ndarray], List[np.ndarray]]:
 
     cropped_PIV_x_data = []
@@ -247,19 +247,26 @@ def get_min_max(data_list: List[np.ndarray]) -> Tuple[float, float]:
     return min_value, max_value
 
 
-def preprocess_old_data(cropped_data: np.ndarray, min_value: float, max_value: float) \
-        -> Tuple[np.ndarray, np.ndarray]:
+def preprocess_data_list(data_list: List[np.ndarray], min_value: float, max_value: float) \
+        -> List[np.ndarray]:
 
-    # STEP 1: normalize the image data via min-max scaling method
-    normalized_data = min_max_scaler(cropped_data, min_value, max_value)
+    discretized_data_list = []
 
-    # STEP 2: discretize the image data into 12 boxes (3 rows, 4 columns)
-    discretized_data = discretize_image(normalized_data, rows=3, columns=4)
+    for data in data_list:
 
-    # STEP 3: change the type of dataset from 'float64' to 'float32'
-    discretized_data = discretized_data.astype('float32')
+        # STEP 1: normalize the image data via min-max scaling method
+        normalized_data = min_max_scaler(data, min_value, max_value)
 
-    return discretized_data
+        # STEP 2: discretize the image data into 12 boxes (3 rows, 4 columns)
+        discretized_data = discretize_image(normalized_data, rows=3, columns=4)
+
+        # STEP 3: change the type of dataset from 'float64' to 'float32'
+        discretized_data = discretized_data.astype('float32')
+
+        # STEP 4: append the data to the data list
+
+    return discretized_data_list
+
 
 def discretize_image(image: np.ndarray, rows: int, columns: int):
 
