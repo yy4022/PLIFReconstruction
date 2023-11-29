@@ -4,16 +4,13 @@ import numpy as np
 import torch
 from torch import nn
 from torch.utils.data import DataLoader
-from torchsummary import summary
 
 from fullyCNN.predict import fullyCNN_predict
-from fullyCNN.train import train_epoch
 from fullyCNN.validate import validate_epoch
-from preprocess_dataset import preprocess_data, show_image, MyDataset, \
-    show_box_PIV, show_box_PLIF, crop_old_PLIFdata, get_min_max, preprocess_data_list, concatenate_data, \
-    crop_old_PIVdata
+from preprocess_dataset import MyDataset, crop_old_PLIFdata, get_min_max, \
+    preprocess_data_list, concatenate_data, crop_old_PIVdata
 from fullyCNN.neural_net import FullyCNN
-from result_visualiser import show_loss, show_difference, show_comparison
+from result_visualiser import show_difference, show_comparison
 
 """
 This file is used for showing the results via the trained global model.
