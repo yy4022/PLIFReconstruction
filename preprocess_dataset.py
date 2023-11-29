@@ -25,12 +25,34 @@ class MyDataset(Dataset):
 # Internal Function
 def min_max_scaler(data: np.ndarray, min_value: float, max_value: float) -> np.ndarray:
 
+    """
+    Internal function:
+        Use the Min-Max scaling to the given data.
+
+    :param data: A numpy array contains the data to be scaled.
+    :param min_value: A float contains the minimum value of the data.
+    :param max_value: A float contains the maximum value of the data.
+    :return: A numpy array of the same shape as 'data', but scaled such that
+            its elements lie in the range [0, 1].
+    """
+
     normalized_data = (data - min_value) / (max_value - min_value)
     return normalized_data
+
 
 # Internal Function
 def crop_data(image_data: np.ndarray, x_axis: np.ndarray, y_axis: np.ndarray) \
         -> np.ndarray:
+
+    """
+    Internal function:
+        Crop the input image data based on specified x and y axis range.
+
+    :param image_data: A numpy array contains the input image data.
+    :param x_axis: A numpy array contains the x-axis values corresponding the columns of the image.
+    :param y_axis: A numpy array contains the y-axis values corresponding the rows of the image.
+    :return: A numpy array contains the cropped image data.
+    """
 
     # STEP 1. define the range of x, y
     cropped_xmin = -15
@@ -50,71 +72,117 @@ def crop_data(image_data: np.ndarray, x_axis: np.ndarray, y_axis: np.ndarray) \
 
     return cropped_data
 
-def preprocess_data(file_PIV: str, file_PLIF: str) \
-        -> Tuple[np.ndarray, np.ndarray, float, float, float, float]:
+
+# Internal Function
+def discretize_image(image: np.ndarray, rows: int, columns: int) -> np.ndarray:
 
     """
-    pre-process the dataset provided by the new datasets
-    :param file_PIV: a string represents the filename of PIV image
-    :param file_PLIF: a string represents the filename of PLIF image
-    :return: a numpy array represents the value of preprocessed PIV image,
-            a numpy array represents the value of preprocessed PLIF image,
-            four float numbers denotes xmin, xmax, ymin, ymax of preprocessed data
+    Internal function:
+        Discretize the input image into a grid of boxes.
+
+    :param image: A 3D numpy array (channels, height, width) contains the image data.
+    :param rows: An integer denotes the number of rows in the discretized grid.
+    :param columns: An integer denotes the number of columns in the discretized grid.
+    :return: A 4D numpy array (boxes, channels, height, width) contains the discretized image.
     """
 
-    # STEP 1: load the datasets
-    with h5py.File(file_PIV, 'r') as file:
-        """
-        Get the PIV numpy array with the shape of (3, 6689, 73, 73), note that:
-            1 denotes the axial(x) velocity, 
-            2 denotes the radial(y) velocity, 
-            3 denotes the tangential(z) velocity
-        """
-        dataset_PIV = file['PIV']['velfield'][:]
+    # STEP 1: get the size of x (last dimension) and y (second last dimension)
+    x_size = image.shape[-1]
+    y_size = image.shape[-2]
+    image_num = image.shape[-3]
+    img_num = 99
 
-        # get the x range of PIV image with (73, 1)
-        PIV_x = file['PIV']['x'][:]
+    # STEP 2: get the x_range and y_range of every box (total: 12 boxes)
+    x_range = math.floor(x_size / columns)
+    y_range = math.floor(y_size / rows)
 
-        # get the y range of PIV image with (73, 1)
-        PIV_y = file['PIV']['y'][:]
+    discretized_image = np.zeros((rows * columns, image_num, y_range, x_range))
 
-    with h5py.File(file_PLIF, 'r') as file:
-        # get the PLIF numpy array with the shape of (1689, 409, 658)
-        dataset_PLIF = file['PLIF']['PLIFfield'][:]
+    for j in range(rows):
+        for i in range(columns):
+            start_x = i * x_range
+            end_x = (i + 1) * x_range
+            start_y = j * y_range
+            end_y = (j + 1) * y_range
 
-        # get the x range of PLIF image with (658, 1)
-        PLIF_x = file['PLIF']['x'][:]
+            box = image[:, start_y:end_y, start_x:end_x]
+            discretized_image[j * columns + i, :, :, :] = box
 
-        # get the y range of PLIF image with (409, 1)
-        PLIF_y = file['PLIF']['y'][:]
+    return discretized_image
 
-    # STEP 2: crop the dataset
-    # 1. define the range of x, y
-    cropped_xmin = max(PLIF_x.min(), PIV_x.min())
-    cropped_ymin = max(PLIF_y.min(), PIV_y.min())
-    cropped_xmax = min(PLIF_x.max(), PIV_x.max())
-    cropped_ymax = min(PLIF_y.max(), PIV_y.max())
 
-    # 2. get the indices satisfied the range
-    indices_PLIF_x = np.where((PLIF_x >= cropped_xmin) & (PLIF_x <= cropped_xmax))[0]
-    indices_PLIF_y = np.where((PLIF_y >= cropped_ymin) & (PLIF_y <= cropped_ymax))[0]
-
-    indices_PIV_x = np.where((PIV_x >= cropped_xmin) & (PIV_x <= cropped_xmax))[0]
-    indices_PIV_y = np.where((PIV_y >= cropped_ymin) & (PIV_y <= cropped_ymax))[0]
-
-    # 3. crop the datasets via the range
-    cropped_PIV = dataset_PIV[:, :, indices_PIV_y[:, np.newaxis], indices_PIV_x]
-    cropped_PLIF = dataset_PLIF[:, indices_PLIF_y[:, np.newaxis], indices_PLIF_x]
-
-    # 4. change the type of dataset from 'float64' to 'float32'
-    cropped_PIV = cropped_PIV.astype('float32')
-    cropped_PLIF = cropped_PLIF.astype('float32')
-
-    return cropped_PIV, cropped_PLIF, cropped_xmin, cropped_xmax, cropped_ymin, cropped_ymax
+# def preprocess_data(file_PIV: str, file_PLIF: str) \
+#         -> Tuple[np.ndarray, np.ndarray, float, float, float, float]:
+#
+#     """
+#     Pre-process the dataset provided by the new datasets
+#     :param file_PIV: A string represents the filename of PIV image
+#     :param file_PLIF: A string represents the filename of PLIF image
+#     :return: A numpy array represents the value of preprocessed PIV image,
+#             a numpy array represents the value of preprocessed PLIF image,
+#             four float numbers denotes xmin, xmax, ymin, ymax of preprocessed data
+#     """
+#
+#     # STEP 1: load the datasets
+#     with h5py.File(file_PIV, 'r') as file:
+#         """
+#         Get the PIV numpy array with the shape of (3, 6689, 73, 73), note that:
+#             1 denotes the axial(x) velocity,
+#             2 denotes the radial(y) velocity,
+#             3 denotes the tangential(z) velocity
+#         """
+#         dataset_PIV = file['PIV']['velfield'][:]
+#
+#         # get the x range of PIV image with (73, 1)
+#         PIV_x = file['PIV']['x'][:]
+#
+#         # get the y range of PIV image with (73, 1)
+#         PIV_y = file['PIV']['y'][:]
+#
+#     with h5py.File(file_PLIF, 'r') as file:
+#         # get the PLIF numpy array with the shape of (1689, 409, 658)
+#         dataset_PLIF = file['PLIF']['PLIFfield'][:]
+#
+#         # get the x range of PLIF image with (658, 1)
+#         PLIF_x = file['PLIF']['x'][:]
+#
+#         # get the y range of PLIF image with (409, 1)
+#         PLIF_y = file['PLIF']['y'][:]
+#
+#     # STEP 2: crop the dataset
+#     # 1. define the range of x, y
+#     cropped_xmin = max(PLIF_x.min(), PIV_x.min())
+#     cropped_ymin = max(PLIF_y.min(), PIV_y.min())
+#     cropped_xmax = min(PLIF_x.max(), PIV_x.max())
+#     cropped_ymax = min(PLIF_y.max(), PIV_y.max())
+#
+#     # 2. get the indices satisfied the range
+#     indices_PLIF_x = np.where((PLIF_x >= cropped_xmin) & (PLIF_x <= cropped_xmax))[0]
+#     indices_PLIF_y = np.where((PLIF_y >= cropped_ymin) & (PLIF_y <= cropped_ymax))[0]
+#
+#     indices_PIV_x = np.where((PIV_x >= cropped_xmin) & (PIV_x <= cropped_xmax))[0]
+#     indices_PIV_y = np.where((PIV_y >= cropped_ymin) & (PIV_y <= cropped_ymax))[0]
+#
+#     # 3. crop the datasets via the range
+#     cropped_PIV = dataset_PIV[:, :, indices_PIV_y[:, np.newaxis], indices_PIV_x]
+#     cropped_PLIF = dataset_PLIF[:, indices_PLIF_y[:, np.newaxis], indices_PLIF_x]
+#
+#     # 4. change the type of dataset from 'float64' to 'float32'
+#     cropped_PIV = cropped_PIV.astype('float32')
+#     cropped_PLIF = cropped_PLIF.astype('float32')
+#
+#     return cropped_PIV, cropped_PLIF, cropped_xmin, cropped_xmax, cropped_ymin, cropped_ymax
 
 
 def crop_old_PIVdata(files_PIV: List[str]) \
         -> Tuple[List[np.ndarray], List[np.ndarray], List[np.ndarray]]:
+
+    """
+    Crop PIV datasets from a list of PIV data files.
+
+    :param files_PIV: A list of string contains the file paths containing PIV datasets in .mat format.
+    :return: Tuple of three lists containing cropped PIV x, y, and z datasets.
+    """
 
     cropped_PIV_x_data = []
     cropped_PIV_y_data = []
@@ -152,7 +220,15 @@ def crop_old_PIVdata(files_PIV: List[str]) \
 
     return cropped_PIV_x_data, cropped_PIV_y_data, cropped_PIV_z_data
 
+
 def crop_old_PLIFdata(files_PLIF: List[str]) -> List[np.ndarray]:
+
+    """
+    Crop PLIF datasets from a list of PLIF data files.
+
+    :param files_PLIF: A list of string contains the file paths containing PLIF datasets in .mat format.
+    :return: A list of numpy arrays contains cropped PLIF datasets.
+    """
 
     cropped_PLIF_data = []
 
@@ -177,7 +253,15 @@ def crop_old_PLIFdata(files_PLIF: List[str]) -> List[np.ndarray]:
 
     return cropped_PLIF_data
 
+
 def get_min_max(data_list: List[np.ndarray]) -> Tuple[float, float]:
+
+    """
+    Get the minimum and maximum values across a list of numpy arrays.
+
+    :param data_list: A list of numpy arrays for which to find the minimum and maximum values.
+    :return: Tuple contains two float number representing the minimum and maximum values.
+    """
 
     min_value = 1000
     max_value = -1000
@@ -194,6 +278,15 @@ def get_min_max(data_list: List[np.ndarray]) -> Tuple[float, float]:
 
 def preprocess_data_list(data_list: List[np.ndarray], min_value: float, max_value: float) \
         -> List[np.ndarray]:
+
+    """
+    Preprocess a list of image data arrays, includes normalization and discretization.
+
+    :param data_list: A list of numpy arrays contains input image data.
+    :param min_value: A float denotes the minimum value for Min-Max scaling.
+    :param max_value: A float denotes the maximum value for Min-Max scaling.
+    :return: A list of numpy arrays contains the preprocessed image data.
+    """
 
     discretized_data_list = []
 
@@ -214,34 +307,14 @@ def preprocess_data_list(data_list: List[np.ndarray], min_value: float, max_valu
     return discretized_data_list
 
 
-def discretize_image(image: np.ndarray, rows: int, columns: int):
-
-    # STEP 1: get the size of x (last dimension) and y (second last dimension)
-    x_size = image.shape[-1]
-    y_size = image.shape[-2]
-    image_num = image.shape[-3]
-    img_num = 99
-
-    # STEP 2: get the x_range and y_range of every box (total: 12 boxes)
-    x_range = math.floor(x_size / columns)
-    y_range = math.floor(y_size / rows)
-
-    discretized_image = np.zeros((rows * columns, image_num, y_range, x_range))
-
-    for j in range(rows):
-        for i in range(columns):
-            start_x = i * x_range
-            end_x = (i + 1) * x_range
-            start_y = j * y_range
-            end_y = (j + 1) * y_range
-
-            box = image[:, start_y:end_y, start_x:end_x]
-            discretized_image[j * columns + i, :, :, :] = box
-
-    return discretized_image
-
-
 def concatenate_data(data_list: List[np.ndarray]) -> np.ndarray:
+
+    """
+    Concatenate a list of numpy arrays horizontally along the second axis.
+
+    :param data_list: A list of numpy arrays contains the input data which need to be concatenated.
+    :return: A list of numpy arrays contains the concatenated data.
+    """
 
     total_data = data_list[0]
 

@@ -11,6 +11,7 @@ def show_boxes_image(image_data: np.ndarray, rows: int, columns: int, vmin: floa
     """
     Internal Function:
         Show the discretized image as the order of the box.
+
     :param image_data: A numpy array contains a given image data with several boxes.
     :param rows: An integer denotes the number of rows of this discretized image.
     :param columns: An integer denotes the number of columns of this discretized image.
@@ -41,6 +42,7 @@ def show_loss(loss: Dict[str, List[float]], filename: str):
 
     """
     Visualizes the training and validation loss over epochs.
+
     :param loss: A dictionary contains training and validation loss records.
     :param filename: A string contains the name for saving the plot.
     :return: None.
@@ -61,6 +63,7 @@ def show_difference(difference: np.ndarray, filename: str, rows: int, columns: i
 
     """
     Visualizes the difference between the prediction and actual output image data of the specified image.
+
     :param difference: A numpy array contains the difference data.
     :param filename: A string contains the name for saving the image.
     :param rows: An integer denotes the number of rows of this discretized image.
@@ -82,6 +85,7 @@ def show_comparison(prediction_data: np.ndarray, actual_data: np.ndarray, predic
 
     """
     Visualizes the prediction and actual output image data of the specified image for comparing.
+
     :param prediction_data: A numpy array contains the prediction data.
     :param actual_data: A numpy array contains the actual output.
     :param prediction_filename: A string contains the name for saving the prediction image.
