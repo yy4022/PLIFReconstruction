@@ -71,6 +71,17 @@ PIV_z_attached_data = concatenate_data(PIV_z_data)
 # 2.1. get the total number of data
 attached_num = PLIF_attached_data.shape[1]
 
+# 2.2 shuffle the datasets by the index
+# create a shuffled index array
+index_array = np.arange(attached_num)
+np.random.shuffle(index_array)
+
+# shuffle the datasets according to the same shuffled index array
+PLIF_attached_data = np.take(PLIF_attached_data, index_array, axis=1)
+PIV_x_attached_data = np.take(PIV_x_attached_data, index_array, axis=1)
+PIV_y_attached_data = np.take(PIV_y_attached_data, index_array, axis=1)
+PIV_z_attached_data = np.take(PIV_z_attached_data, index_array, axis=1)
+
 # 2.2. calculate the position of splitting points to satisfy the proportion (3: 1: 1)
 attached_split_points = [int(np.floor(attached_num * 0.6)), int(np.floor(attached_num * 0.8))]
 
