@@ -105,10 +105,10 @@ training_PLIF_dataset = MyDataset(training_PLIF_data)
 validation_PLIF_dataset = MyDataset(validation_PLIF_data)
 
 # 3.6. save the datasets for training
-with open('data/Preprocessed_Data_old/Train/training_PLIF_dataset1.pkl', 'wb') as file:
+with open('data/Preprocessed_Data_old/Train/training_PLIF_dataset2.pkl', 'wb') as file:
     pickle.dump(training_PLIF_dataset, file)
 
-with open('data/Preprocessed_Data_old/Train/validation_PLIF_dataset1.pkl', 'wb') as file:
+with open('data/Preprocessed_Data_old/Train/validation_PLIF_dataset2.pkl', 'wb') as file:
     pickle.dump(validation_PLIF_dataset, file)
 
 # PART 4: preprocess the datasets (for PIV)
@@ -154,8 +154,8 @@ training_x_PIV_dataset = MyDataset(training_x_PIV_data)
 validation_x_PIV_dataset = MyDataset(validation_x_PIV_data)
 
 # 5.6. save the datasets for training
-with open('data/Preprocessed_Data_old/Train/training_x_PIV_dataset1.pkl', 'wb') as file:
+with open('data/Preprocessed_Data_old/Train/training_x_PIV_dataset2.pkl', 'wb') as file:
     pickle.dump(training_x_PIV_dataset, file)
 
-with open('data/Preprocessed_Data_old/Train/validation_x_PIV_dataset1.pkl', 'wb') as file:
+with open('data/Preprocessed_Data_old/Train/validation_x_PIV_dataset2.pkl', 'wb') as file:
     pickle.dump(validation_x_PIV_dataset, file)
