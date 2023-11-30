@@ -8,7 +8,7 @@ from torchsummary import summary
 
 from fullyCNN.train import train_epoch
 from fullyCNN.validate import validate_epoch
-from preprocess_dataset import MyDataset, crop_old_PIVdata, crop_old_PLIFdata, \
+from preprocess_methods import MyDataset, crop_old_PIVdata, crop_old_PLIFdata, \
     get_min_max, preprocess_data_list, concatenate_data
 from fullyCNN.neural_net import FullyCNN
 from result_visualiser import show_loss

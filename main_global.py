@@ -8,7 +8,7 @@ from torchsummary import summary
 
 from fullyCNN.train import train_epoch
 from fullyCNN.validate import validate_epoch
-from preprocess_dataset import MyDataset, crop_old_PIVdata, crop_old_PLIFdata, \
+from preprocess_methods import MyDataset, crop_old_PIVdata, crop_old_PLIFdata, \
     get_min_max, preprocess_data_list, concatenate_data
 from fullyCNN.neural_net import FullyCNN
 from result_visualiser import show_loss
@@ -38,10 +38,20 @@ if_existing = False # a flag recording if there is an existing fullyCNN model
 
 # 1.3. provide filenames of PIV, PLIF data
 files_PIV = ['data/Attached state/D1F1_air240_PIV_1001to2000.mat',
-             'data/Attached state/D1F1_air240_PIV_2001to3000.mat']
+             'data/Attached state/D1F1_air240_PIV_2001to3000.mat',
+             'data/Detachment process/D1F1_air240_PIV_13401to13600.mat',
+             'data/Lifted state/D1F1_air240_PIV_13601to14000.mat',
+             'data/Lifted state/D1F1_air240_PIV_14001to14999.mat',
+             'data/Reattachment process/D1F1_air240_PIV_451to650.mat',
+             'data/Reattachment process/D1F1_air240_PIV_6201to6700.mat']
 
 files_PLIF = ['data/Attached state/D1F1_air240_PLIF_1001to2000.mat',
-              'data/Attached state/D1F1_air240_PLIF_2001to3000.mat']
+              'data/Attached state/D1F1_air240_PLIF_2001to3000.mat',
+              'data/Detachment process/D1F1_air240_PLIF_13401to13600.mat',
+              'data/Lifted state/D1F1_air240_PLIF_13601to14000.mat',
+              'data/Lifted state/D1F1_air240_PLIF_14001to14999.mat',
+              'data/Reattachment process/D1F1_air240_PLIF_451to650.mat',
+              'data/Reattachment process/D1F1_air240_PLIF_6201to6700.mat']
 
 # PART 2: preprocess the datasets
 # 2.1. preprocess the datasets, then return the cropped datasets
@@ -55,51 +65,51 @@ min_PIV_y, max_PIV_y = get_min_max(cropped_PIV_y_data)
 min_PIV_z, max_PIV_z = get_min_max(cropped_PIV_z_data)
 
 # 2.3. normalize and discretize the datasets according to the min, max values
-PLIF_data = preprocess_data_list(cropped_PLIF_data, min_PLIF, max_PLIF)
-PIV_x_data = preprocess_data_list(cropped_PIV_x_data, min_PIV_x, max_PIV_x)
-PIV_y_data = preprocess_data_list(cropped_PIV_y_data, min_PIV_y, max_PIV_y)
-PIV_z_data = preprocess_data_list(cropped_PIV_z_data, min_PIV_z, max_PIV_z)
+preprocessed_PLIF_data = preprocess_data_list(cropped_PLIF_data, min_PLIF, max_PLIF)
+preprocessed_PIV_x_data = preprocess_data_list(cropped_PIV_x_data, min_PIV_x, max_PIV_x)
+preprocessed_PIV_y_data = preprocess_data_list(cropped_PIV_y_data, min_PIV_y, max_PIV_y)
+preprocessed_PIV_z_data = preprocess_data_list(cropped_PIV_z_data, min_PIV_z, max_PIV_z)
 
 # PART 3: split the datasets to training, validation, testing datasets
 # 1. concatenate the datasets as required
-PLIF_attached_data = concatenate_data(PLIF_data)
-PIV_x_attached_data = concatenate_data(PIV_x_data)
-PIV_y_attached_data = concatenate_data(PIV_y_data)
-PIV_z_attached_data = concatenate_data(PIV_z_data)
+PLIF_data = concatenate_data(preprocessed_PLIF_data)
+PIV_x_data = concatenate_data(preprocessed_PIV_x_data)
+PIV_y_data = concatenate_data(preprocessed_PIV_y_data)
+PIV_z_data = concatenate_data(preprocessed_PIV_z_data)
 
 # 2. split the datasets for training, validation and testing
 # 2.1. get the total number of data
-attached_num = PLIF_attached_data.shape[1]
+data_num = PLIF_data.shape[1]
 
 # 2.2 shuffle the datasets by the index
 # create a shuffled index array
-index_array = np.arange(attached_num)
+index_array = np.arange(data_num)
 np.random.shuffle(index_array)
 
 # shuffle the datasets according to the same shuffled index array
-PLIF_attached_data = np.take(PLIF_attached_data, index_array, axis=1)
-PIV_x_attached_data = np.take(PIV_x_attached_data, index_array, axis=1)
-PIV_y_attached_data = np.take(PIV_y_attached_data, index_array, axis=1)
-PIV_z_attached_data = np.take(PIV_z_attached_data, index_array, axis=1)
+PLIF_data = np.take(PLIF_data, index_array, axis=1)
+PIV_x_data = np.take(PIV_x_data, index_array, axis=1)
+PIV_y_data = np.take(PIV_y_data, index_array, axis=1)
+PIV_z_data = np.take(PIV_z_data, index_array, axis=1)
 
 # 2.2. calculate the position of splitting points to satisfy the proportion (3: 1: 1)
-attached_split_points = [int(np.floor(attached_num * 0.6)), int(np.floor(attached_num * 0.8))]
+split_points = [int(np.floor(data_num * 0.6)), int(np.floor(data_num * 0.8))]
 
 # 2.3. split the datasets according to the splitting points
-PIV_x_attached_data_split = np.split(PIV_x_attached_data, attached_split_points, axis=1)
-PLIF_attached_data_split = np.split(PLIF_attached_data, attached_split_points, axis=1)
+PIV_x_data_split = np.split(PIV_x_data, split_points, axis=1)
+PLIF_data_split = np.split(PLIF_data, split_points, axis=1)
 
 # 2.4. obtain the training, validation, testing sets
-training_x_PIV_data = PIV_x_attached_data_split[0]
-training_PLIF_data = PLIF_attached_data_split[0]
+training_x_PIV_data = PIV_x_data_split[0]
+training_PLIF_data = PLIF_data_split[0]
 training_nums = training_PLIF_data.shape[1]
 
-validation_x_PIV_data = PIV_x_attached_data_split[1]
-validation_PLIF_data = PLIF_attached_data_split[1]
+validation_x_PIV_data = PIV_x_data_split[1]
+validation_PLIF_data = PLIF_data_split[1]
 validation_nums = validation_PLIF_data.shape[1]
 
-testing_x_PIV_data = PIV_x_attached_data_split[2]
-testing_PLIF_data = PLIF_attached_data_split[2]
+testing_x_PIV_data = PIV_x_data_split[2]
+testing_PLIF_data = PLIF_data_split[2]
 testing_nums = testing_PLIF_data.shape[1]
 
 # 2.5. reshape the training, validation, testing datasets
