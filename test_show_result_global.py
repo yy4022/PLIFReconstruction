@@ -140,7 +140,7 @@ validation_PLIF_loader = DataLoader(dataset=validation_PLIF_dataset, batch_size=
 testing_x_PIV_loader = DataLoader(dataset=testing_x_PIV_dataset, batch_size=batch_size, shuffle=False)
 testing_PLIF_loader = DataLoader(dataset=testing_PLIF_dataset, batch_size=batch_size, shuffle=False)
 
-# PART 3: preparation before training the model
+# PART 3: load the existing model for showing
 # 1. define the FullyCNN model
 fullyCNN = FullyCNN()
 

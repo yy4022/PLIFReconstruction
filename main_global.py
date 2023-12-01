@@ -27,7 +27,7 @@ device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cp
 print(f"Selected device: {device}")
 
 # 1.2. define the parameters for training the model
-batch_size = 100
+batch_size = 200
 rows = 3
 columns = 4
 img_num = 0
@@ -37,28 +37,28 @@ if_existing = False # a flag recording if there is an existing fullyCNN model
 
 # PART 2：create the dataloader for training
 # 2.1. load the datasets
-with open('data/Preprocessed_Data_old/Train/training_PLIF_dataset1.pkl', 'rb') as file:
+with open('data/Preprocessed_Data_old/training_PLIF_dataset1.pkl', 'rb') as file:
     training_PLIF_dataset1 = pickle.load(file)
 
-with open('data/Preprocessed_Data_old/Train/training_PLIF_dataset2.pkl', 'rb') as file:
+with open('data/Preprocessed_Data_old/training_PLIF_dataset2.pkl', 'rb') as file:
     training_PLIF_dataset2 = pickle.load(file)
 
-with open('data/Preprocessed_Data_old/Train/training_x_PIV_dataset1.pkl', 'rb') as file:
+with open('data/Preprocessed_Data_old/training_x_PIV_dataset1.pkl', 'rb') as file:
     training_x_PIV_dataset1 = pickle.load(file)
 
-with open('data/Preprocessed_Data_old/Train/training_x_PIV_dataset2.pkl', 'rb') as file:
+with open('data/Preprocessed_Data_old/training_x_PIV_dataset2.pkl', 'rb') as file:
     training_x_PIV_dataset2 = pickle.load(file)
 
-with open('data/Preprocessed_Data_old/Train/validation_PLIF_dataset1.pkl', 'rb') as file:
+with open('data/Preprocessed_Data_old/validation_PLIF_dataset1.pkl', 'rb') as file:
     validation_PLIF_dataset1 = pickle.load(file)
 
-with open('data/Preprocessed_Data_old/Train/validation_PLIF_dataset2.pkl', 'rb') as file:
+with open('data/Preprocessed_Data_old/validation_PLIF_dataset2.pkl', 'rb') as file:
     validation_PLIF_dataset2 = pickle.load(file)
 
-with open('data/Preprocessed_Data_old/Train/validation_x_PIV_dataset1.pkl', 'rb') as file:
+with open('data/Preprocessed_Data_old/validation_x_PIV_dataset1.pkl', 'rb') as file:
     validation_x_PIV_dataset1 = pickle.load(file)
 
-with open('data/Preprocessed_Data_old/Train/validation_x_PIV_dataset2.pkl', 'rb') as file:
+with open('data/Preprocessed_Data_old/validation_x_PIV_dataset2.pkl', 'rb') as file:
     validation_x_PIV_dataset2 = pickle.load(file)
 
 # 2.2. create the corresponding dataloaders
