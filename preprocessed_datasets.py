@@ -12,27 +12,27 @@ This file is used for generating the datasets for training anding the global mod
 # 1.1. define the parameters for training the model
 rows = 3
 columns = 4
-specified_dataset = 1
+specified_dataset = 4
 
 # 1.2. provide filenames of PIV, PLIF data
 files_PIV = [
-             'data/Attached state/D1F1_air240_PIV_1001to2000.mat', # dataset1 - attached
-             'data/Attached state/D1F1_air240_PIV_2001to3000.mat',
+             # 'data/Attached state/D1F1_air240_PIV_1001to2000.mat', # dataset1 - attached
+             # 'data/Attached state/D1F1_air240_PIV_2001to3000.mat',
              # 'data/Detachment process/D1F1_air240_PIV_13401to13600.mat', # dataset2 - detachment
              # 'data/Lifted state/D1F1_air240_PIV_13601to14000.mat', # dataset3 - lifted
              # 'data/Lifted state/D1F1_air240_PIV_14001to14999.mat',
-             # 'data/Reattachment process/D1F1_air240_PIV_451to650.mat', # dataset4 - reattachment
-             # 'data/Reattachment process/D1F1_air240_PIV_6201to6700.mat'
+             'data/Reattachment process/D1F1_air240_PIV_451to650.mat', # dataset4 - reattachment
+             'data/Reattachment process/D1F1_air240_PIV_6201to6700.mat',
              ]
 
 files_PLIF = [
-              'data/Attached state/D1F1_air240_PLIF_1001to2000.mat', # dataset1 - attached
-              'data/Attached state/D1F1_air240_PLIF_2001to3000.mat',
+              # 'data/Attached state/D1F1_air240_PLIF_1001to2000.mat', # dataset1 - attached
+              # 'data/Attached state/D1F1_air240_PLIF_2001to3000.mat',
               # 'data/Detachment process/D1F1_air240_PLIF_13401to13600.mat', # dataset2 - detachment
               # 'data/Lifted state/D1F1_air240_PLIF_13601to14000.mat', # dataset3 - lifted
               # 'data/Lifted state/D1F1_air240_PLIF_14001to14999.mat',
-              # 'data/Reattachment process/D1F1_air240_PLIF_451to650.mat/', # dataset4 - reattachment
-              # 'data/Reattachment process/D1F1_air240_PLIF_6201to6700.mat'
+              'data/Reattachment process/D1F1_air240_PLIF_451to650.mat', # dataset4 - reattachment
+              'data/Reattachment process/D1F1_air240_PLIF_6201to6700.mat',
               ]
 
 # PART 2: preprocess the datasets (for PLIF)

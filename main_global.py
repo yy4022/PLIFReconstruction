@@ -34,7 +34,7 @@ img_num = 0
 EPOCHS = 1000
 lr = 0.0001
 if_existing = False # a flag recording if there is an existing fullyCNN model
-dataset_num = 1
+dataset_num = 4
 
 # PART 2：create the dataloader for training
 # 2.1. load the datasets
