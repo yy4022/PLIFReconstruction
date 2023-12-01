@@ -12,25 +12,26 @@ This file is used for generating the datasets for training anding the global mod
 # 1.1. define the parameters for training the model
 rows = 3
 columns = 4
+specified_dataset = 1
 
 # 1.2. provide filenames of PIV, PLIF data
 files_PIV = [
-             'data/Attached state/D1F1_air240_PIV_1001to2000.mat',
+             'data/Attached state/D1F1_air240_PIV_1001to2000.mat', # dataset1 - attached
              'data/Attached state/D1F1_air240_PIV_2001to3000.mat',
-             'data/Detachment process/D1F1_air240_PIV_13401to13600.mat',
-             # 'data/Lifted state/D1F1_air240_PIV_13601to14000.mat',
+             # 'data/Detachment process/D1F1_air240_PIV_13401to13600.mat', # dataset2 - detachment
+             # 'data/Lifted state/D1F1_air240_PIV_13601to14000.mat', # dataset3 - lifted
              # 'data/Lifted state/D1F1_air240_PIV_14001to14999.mat',
-             # 'data/Reattachment process/D1F1_air240_PIV_451to650.mat',
+             # 'data/Reattachment process/D1F1_air240_PIV_451to650.mat', # dataset4 - reattachment
              # 'data/Reattachment process/D1F1_air240_PIV_6201to6700.mat'
              ]
 
 files_PLIF = [
-              'data/Attached state/D1F1_air240_PLIF_1001to2000.mat',
+              'data/Attached state/D1F1_air240_PLIF_1001to2000.mat', # dataset1 - attached
               'data/Attached state/D1F1_air240_PLIF_2001to3000.mat',
-              'data/Detachment process/D1F1_air240_PLIF_13401to13600.mat',
-              # 'data/Lifted state/D1F1_air240_PLIF_13601to14000.mat',
+              # 'data/Detachment process/D1F1_air240_PLIF_13401to13600.mat', # dataset2 - detachment
+              # 'data/Lifted state/D1F1_air240_PLIF_13601to14000.mat', # dataset3 - lifted
               # 'data/Lifted state/D1F1_air240_PLIF_14001to14999.mat',
-              # 'data/Reattachment process/D1F1_air240_PLIF_451to650.mat',
+              # 'data/Reattachment process/D1F1_air240_PLIF_451to650.mat/', # dataset4 - reattachment
               # 'data/Reattachment process/D1F1_air240_PLIF_6201to6700.mat'
               ]
 
@@ -98,13 +99,13 @@ validation_PLIF_dataset = MyDataset(validation_PLIF_data)
 testing_PLIF_dataset = MyDataset(testing_PLIF_data)
 
 # 3.6. save the datasets for training
-with open('data/Preprocessed_Data_old/training_PLIF_dataset2.pkl', 'wb') as file:
+with open(f'data/Preprocessed_Data_old/training_PLIF_dataset{specified_dataset}.pkl', 'wb') as file:
     pickle.dump(training_PLIF_dataset, file)
 
-with open('data/Preprocessed_Data_old/validation_PLIF_dataset2.pkl', 'wb') as file:
+with open(f'data/Preprocessed_Data_old/validation_PLIF_dataset{specified_dataset}.pkl', 'wb') as file:
     pickle.dump(validation_PLIF_dataset, file)
 
-with open('data/Preprocessed_Data_old/testing_PLIF_dataset2.pkl', 'wb') as file:
+with open(f'data/Preprocessed_Data_old/testing_PLIF_dataset{specified_dataset}.pkl', 'wb') as file:
     pickle.dump(testing_PLIF_dataset, file)
 
 # PART 4: preprocess the datasets (for PIV)
@@ -134,9 +135,9 @@ validation_x_PIV_data = PIV_x_data_split[1]
 testing_x_PIV_data = PIV_x_data_split[2]
 
 # 5.2.4. save the training, validation and testing sets
-np.save('data/Preprocessed_Data_old/training_x_PIV_data2.npy', training_x_PIV_data)
-np.save('data/Preprocessed_Data_old/validation_x_PIV_data2.npy', validation_x_PIV_data)
-np.save('data/Preprocessed_Data_old/testing_x_PIV_data2.npy', testing_x_PIV_data)
+np.save(f'data/Preprocessed_Data_old/training_x_PIV_data{specified_dataset}.npy', training_x_PIV_data)
+np.save(f'data/Preprocessed_Data_old/validation_x_PIV_data{specified_dataset}.npy', validation_x_PIV_data)
+np.save(f'data/Preprocessed_Data_old/testing_x_PIV_data{specified_dataset}.npy', testing_x_PIV_data)
 
 # 5.3. reshape the training, validation and testing datasets
 # get the essential shape information for reshaping datasets
@@ -159,11 +160,11 @@ validation_x_PIV_dataset = MyDataset(validation_x_PIV_data)
 testing_x_PIV_dataset = MyDataset(testing_x_PIV_data)
 
 # 5.6. save the datasets for training
-with open('data/Preprocessed_Data_old/training_x_PIV_dataset2.pkl', 'wb') as file:
+with open(f'data/Preprocessed_Data_old/training_x_PIV_dataset{specified_dataset}.pkl', 'wb') as file:
     pickle.dump(training_x_PIV_dataset, file)
 
-with open('data/Preprocessed_Data_old/validation_x_PIV_dataset2.pkl', 'wb') as file:
+with open(f'data/Preprocessed_Data_old/validation_x_PIV_dataset{specified_dataset}.pkl', 'wb') as file:
     pickle.dump(validation_x_PIV_dataset, file)
 
-with open('data/Preprocessed_Data_old/testing_x_PIV_dataset2.pkl', 'wb') as file:
+with open(f'data/Preprocessed_Data_old/testing_x_PIV_dataset{specified_dataset}.pkl', 'wb') as file:
     pickle.dump(testing_x_PIV_dataset, file)

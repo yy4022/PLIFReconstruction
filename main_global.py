@@ -34,45 +34,55 @@ img_num = 0
 EPOCHS = 1000
 lr = 0.0001
 if_existing = False # a flag recording if there is an existing fullyCNN model
+dataset_num = 1
 
 # PART 2：create the dataloader for training
 # 2.1. load the datasets
-with open('data/Preprocessed_Data_old/training_PLIF_dataset1.pkl', 'rb') as file:
-    training_PLIF_dataset1 = pickle.load(file)
+training_PLIF_dataset_list = []
+training_x_PIV_dataset_list = []
 
-with open('data/Preprocessed_Data_old/training_PLIF_dataset2.pkl', 'rb') as file:
-    training_PLIF_dataset2 = pickle.load(file)
+validation_PLIF_dataset_list = []
+validation_x_PIV_dataset_list = []
 
-with open('data/Preprocessed_Data_old/training_x_PIV_dataset1.pkl', 'rb') as file:
-    training_x_PIV_dataset1 = pickle.load(file)
+for i in range(dataset_num):
 
-with open('data/Preprocessed_Data_old/training_x_PIV_dataset2.pkl', 'rb') as file:
-    training_x_PIV_dataset2 = pickle.load(file)
+    with open(f'data/Preprocessed_Data_old/training_PLIF_dataset{i+1}.pkl', 'rb') as file:
+        training_PLIF_dataset = pickle.load(file)
 
-with open('data/Preprocessed_Data_old/validation_PLIF_dataset1.pkl', 'rb') as file:
-    validation_PLIF_dataset1 = pickle.load(file)
+    with open(f'data/Preprocessed_Data_old/training_x_PIV_dataset{i+1}.pkl', 'rb') as file:
+        training_x_PIV_dataset = pickle.load(file)
 
-with open('data/Preprocessed_Data_old/validation_PLIF_dataset2.pkl', 'rb') as file:
-    validation_PLIF_dataset2 = pickle.load(file)
+    with open(f'data/Preprocessed_Data_old/validation_PLIF_dataset{i+1}.pkl', 'rb') as file:
+        validation_PLIF_dataset = pickle.load(file)
 
-with open('data/Preprocessed_Data_old/validation_x_PIV_dataset1.pkl', 'rb') as file:
-    validation_x_PIV_dataset1 = pickle.load(file)
+    with open(f'data/Preprocessed_Data_old/validation_x_PIV_dataset{i+1}.pkl', 'rb') as file:
+        validation_x_PIV_dataset = pickle.load(file)
 
-with open('data/Preprocessed_Data_old/validation_x_PIV_dataset2.pkl', 'rb') as file:
-    validation_x_PIV_dataset2 = pickle.load(file)
+    training_PLIF_dataset_list.append(training_PLIF_dataset)
+    training_x_PIV_dataset_list.append(training_x_PIV_dataset)
+    validation_PLIF_dataset_list.append(validation_PLIF_dataset)
+    validation_x_PIV_dataset_list.append(validation_x_PIV_dataset)
+
 
 # 2.2. create the corresponding dataloaders
-training_x_PIV_loader1 = DataLoader(dataset=training_x_PIV_dataset1, batch_size=batch_size, shuffle=False)
-training_PLIF_loader1 = DataLoader(dataset=training_PLIF_dataset1, batch_size=batch_size, shuffle=False)
+training_PLIF_dataloader_list = []
+training_x_PIV_dataloader_list = []
 
-validation_x_PIV_loader1 = DataLoader(dataset=validation_x_PIV_dataset1, batch_size=batch_size, shuffle=False)
-validation_PLIF_loader1 = DataLoader(dataset=validation_PLIF_dataset1, batch_size=batch_size, shuffle=False)
+validation_PLIF_dataloader_list = []
+validation_x_PIV_dataloader_list = []
 
-training_x_PIV_loader2 = DataLoader(dataset=training_x_PIV_dataset2, batch_size=batch_size, shuffle=False)
-training_PLIF_loader2 = DataLoader(dataset=training_PLIF_dataset2, batch_size=batch_size, shuffle=False)
+for i in range(dataset_num):
 
-validation_x_PIV_loader2 = DataLoader(dataset=validation_x_PIV_dataset2, batch_size=batch_size, shuffle=False)
-validation_PLIF_loader2 = DataLoader(dataset=validation_PLIF_dataset2, batch_size=batch_size, shuffle=False)
+    training_x_PIV_loader = DataLoader(dataset=training_x_PIV_dataset_list[i], batch_size=batch_size, shuffle=False)
+    training_PLIF_loader = DataLoader(dataset=training_PLIF_dataset_list[i], batch_size=batch_size, shuffle=False)
+
+    validation_x_PIV_loader = DataLoader(dataset=validation_x_PIV_dataset_list[i], batch_size=batch_size, shuffle=False)
+    validation_PLIF_loader = DataLoader(dataset=validation_PLIF_dataset_list[i], batch_size=batch_size, shuffle=False)
+
+    training_PLIF_dataloader_list.append(training_PLIF_loader)
+    training_x_PIV_dataloader_list.append(training_x_PIV_loader)
+    validation_PLIF_dataloader_list.append(validation_PLIF_loader)
+    validation_x_PIV_dataloader_list.append(validation_x_PIV_loader)
 
 # PART 3: preparation before training the model
 # 1. define the FullyCNN model
@@ -127,21 +137,24 @@ optimizer = torch.optim.Adam(fullyCNN.parameters(), lr=lr, weight_decay=1e-05)
 # NOTE: the test file takes PIV-x (dimension-0) as an example
 for epoch in range(EPOCHS):
 
-    train_loss1 = train_epoch(fullyCNN=fullyCNN, device=device, dataloader_in=training_PLIF_loader1,
-                              dataloader_out=training_x_PIV_loader1, loss_fn=loss_fn, optimizer=optimizer)
+    train_loss_list = []
+    validation_loss_list = []
 
-    train_loss2 = train_epoch(fullyCNN=fullyCNN, device=device, dataloader_in=training_PLIF_loader2,
-                              dataloader_out=training_x_PIV_loader2, loss_fn=loss_fn, optimizer=optimizer)
+    for i in range(dataset_num):
 
-    train_loss = (train_loss1 + train_loss2) / 2
+        train_loss_i = train_epoch(fullyCNN=fullyCNN, device=device, dataloader_in=training_PLIF_dataloader_list[i],
+                                   dataloader_out=training_x_PIV_dataloader_list[i],
+                                   loss_fn=loss_fn, optimizer=optimizer)
 
-    validation_loss1 = validate_epoch(fullyCNN=fullyCNN, device=device, dataloader_in=validation_PLIF_loader1,
-                                      dataloader_out=validation_x_PIV_loader1, loss_fn=loss_fn)
+        validation_loss_i = validate_epoch(fullyCNN=fullyCNN, device=device,
+                                           dataloader_in=validation_PLIF_dataloader_list[i],
+                                           dataloader_out=validation_x_PIV_dataloader_list[i], loss_fn=loss_fn)
 
-    validation_loss2 = validate_epoch(fullyCNN=fullyCNN, device=device, dataloader_in=validation_PLIF_loader2,
-                                      dataloader_out=validation_x_PIV_loader2, loss_fn=loss_fn)
+        train_loss_list.append(train_loss_i)
+        validation_loss_list.append(validation_loss_i)
 
-    validation_loss = (validation_loss1 + validation_loss2) / 2
+    train_loss = np.mean(train_loss_list)
+    validation_loss = np.mean(validation_loss_list)
 
     print(
         '\n EPOCH {}/{} \t train loss {} \t validate loss {}'.format(epoch + 1, EPOCHS, train_loss,
