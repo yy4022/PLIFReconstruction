@@ -90,16 +90,14 @@ testing_PLIF_data = PLIF_attached_data_split[2]
 testing_nums = testing_PLIF_data.shape[1]
 
 # PART 4: process the data, load the model of the specified box, then make predictions
-training_prediction = []
-validation_prediction = []
-testing_prediction = []
-
-training_prediction = np.array(training_prediction)
-validation_prediction = np.array(validation_prediction)
-testing_prediction = np.array(testing_prediction)
+training_prediction = np.empty_like(training_x_PIV_data)
+validation_prediction = np.empty_like(validation_x_PIV_data)
+testing_prediction = np.empty_like(testing_x_PIV_data)
 
 # use the loop to make prediction for all boxes
-for specified_box in range(rows * columns):
+for i in range(rows * columns):
+
+    specified_box = i + 1
 
     # Section 1: process the data of the specified box
     # 1.1. select the specified box data
@@ -148,7 +146,7 @@ for specified_box in range(rows * columns):
 
     # check if there is an existing model
     if os.path.exists(f'./model/fullyCNN_box{specified_box}.pt'):
-        fullyCNN = torch.load('./model/fullyCNN.pt')
+        fullyCNN = torch.load(f'./model/fullyCNN_box{specified_box}.pt')
 
         # set the if_existing flag
         if_existing = True
@@ -185,9 +183,9 @@ for specified_box in range(rows * columns):
     testing_prediction_box = testing_prediction_box.cpu().data.numpy()
 
     # save the prediction of specified box to the result array
-    training_prediction[specified_box, :, :, :] = training_prediction_box
-    validation_prediction[specified_box, :, :, :] = validation_prediction_box
-    testing_prediction[specified_box, :, :, :] = testing_prediction_box
+    training_prediction[specified_box - 1] = np.squeeze(training_prediction_box, axis=1)
+    validation_prediction[specified_box - 1] = np.squeeze(validation_prediction_box, axis=1)
+    testing_prediction[specified_box - 1] = np.squeeze(testing_prediction_box, axis=1)
 
 # PART 5: show the comparison and difference between prediction and actual data
 # 5.1. for the training dataset

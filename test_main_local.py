@@ -36,7 +36,7 @@ img_num = 0
 EPOCHS = 1000
 lr = 0.0001
 if_existing = False # a flag recording if there is an existing fullyCNN model
-specified_box = 1 # indicates which specified box corresponds to the local fullyCNN model, range in [1, 12]
+specified_box = 12 # indicates which specified box corresponds to the local fullyCNN model, range in [1, 12]
 
 # 1.3. provide filenames of PIV, PLIF data
 files_PIV = ['data/Attached state/D1F1_air240_PIV_1001to2000.mat',
@@ -138,7 +138,7 @@ fullyCNN = FullyCNN()
 
 # check if there is an existing model
 if os.path.exists(f'./model/fullyCNN_box{specified_box}.pt'):
-    fullyCNN = torch.load('./model/fullyCNN.pt')
+    fullyCNN = torch.load(f'./model/fullyCNN_box{specified_box}.pt')
 
     # set the if_existing flag
     if_existing = True
