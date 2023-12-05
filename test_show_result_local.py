@@ -1,16 +1,9 @@
-
-
-"""
-This file is used for showing the results via the trained local model.
-NOTE: the main difference between local and global method is that how to call the model.
-"""
 import os
 
 import numpy as np
 import torch
 from torch import nn
 from torch.utils.data import DataLoader
-from torchsummary import summary
 
 from fullyCNN.neural_net import FullyCNN
 from fullyCNN.predict import fullyCNN_predict
@@ -18,6 +11,11 @@ from fullyCNN.validate import validate_epoch
 from preprocess_methods import crop_old_PLIFdata, crop_old_PIVdata, get_min_max, preprocess_data_list, concatenate_data, \
     MyDataset
 from result_visualiser import show_comparison, show_difference
+
+"""
+This file is used for showing the results via the trained local model.
+NOTE: the main difference between local and global method is that how to call the model.
+"""
 
 # PART 1: define the parameters
 # 1.1. choose the device

@@ -12,3 +12,5 @@ data/
 
 test_main_global.py
 test_show_result_global.py
+
+test_main_local.py
