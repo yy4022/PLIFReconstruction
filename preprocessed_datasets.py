@@ -76,6 +76,11 @@ training_nums = training_PLIF_data.shape[1]
 validation_nums = validation_PLIF_data.shape[1]
 testing_nums = testing_PLIF_data.shape[1]
 
+# 3.2.6. save the training, validation and testing sets
+np.save(f'data/Preprocessed_Data_old/training_PLIF_data{specified_dataset}.npy', training_PLIF_data)
+np.save(f'data/Preprocessed_Data_old/validation_PLIF_data{specified_dataset}.npy', validation_PLIF_data)
+np.save(f'data/Preprocessed_Data_old/testing_PLIF_data{specified_dataset}.npy', testing_PLIF_data)
+
 # 3.3. reshape the training, validation and testing datasets
 # get the essential shape information for reshaping datasets
 boxes = training_PLIF_data.shape[0] # 12 boxes
