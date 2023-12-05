@@ -33,7 +33,7 @@ columns = 4
 img_num = 0
 EPOCHS = 5000
 lr = 0.0001
-if_existing = False # a flag recording if there is an existing fullyCNN model
+if_existing = False  # a flag recording if there is an existing fullyCNN model
 dataset_num = 4
 
 # PART 2：create the dataloader for training
@@ -45,24 +45,22 @@ validation_PLIF_dataset_list = []
 validation_x_PIV_dataset_list = []
 
 for i in range(dataset_num):
-
-    with open(f'data/Preprocessed_Data_old/training_PLIF_dataset{i+1}.pkl', 'rb') as file:
+    with open(f'data/Preprocessed_Data_old/training_PLIF_dataset{i + 1}.pkl', 'rb') as file:
         training_PLIF_dataset = pickle.load(file)
 
-    with open(f'data/Preprocessed_Data_old/training_x_PIV_dataset{i+1}.pkl', 'rb') as file:
+    with open(f'data/Preprocessed_Data_old/training_x_PIV_dataset{i + 1}.pkl', 'rb') as file:
         training_x_PIV_dataset = pickle.load(file)
 
-    with open(f'data/Preprocessed_Data_old/validation_PLIF_dataset{i+1}.pkl', 'rb') as file:
+    with open(f'data/Preprocessed_Data_old/validation_PLIF_dataset{i + 1}.pkl', 'rb') as file:
         validation_PLIF_dataset = pickle.load(file)
 
-    with open(f'data/Preprocessed_Data_old/validation_x_PIV_dataset{i+1}.pkl', 'rb') as file:
+    with open(f'data/Preprocessed_Data_old/validation_x_PIV_dataset{i + 1}.pkl', 'rb') as file:
         validation_x_PIV_dataset = pickle.load(file)
 
     training_PLIF_dataset_list.append(training_PLIF_dataset)
     training_x_PIV_dataset_list.append(training_x_PIV_dataset)
     validation_PLIF_dataset_list.append(validation_PLIF_dataset)
     validation_x_PIV_dataset_list.append(validation_x_PIV_dataset)
-
 
 # 2.2. create the corresponding dataloaders
 training_PLIF_dataloader_list = []
@@ -72,7 +70,6 @@ validation_PLIF_dataloader_list = []
 validation_x_PIV_dataloader_list = []
 
 for i in range(dataset_num):
-
     training_x_PIV_loader = DataLoader(dataset=training_x_PIV_dataset_list[i], batch_size=batch_size, shuffle=False)
     training_PLIF_loader = DataLoader(dataset=training_PLIF_dataset_list[i], batch_size=batch_size, shuffle=False)
 
@@ -141,7 +138,6 @@ for epoch in range(EPOCHS):
     validation_loss_list = []
 
     for i in range(dataset_num):
-
         train_loss_i = train_epoch(fullyCNN=fullyCNN, device=device, dataloader_in=training_PLIF_dataloader_list[i],
                                    dataloader_out=training_x_PIV_dataloader_list[i],
                                    loss_fn=loss_fn, optimizer=optimizer)
