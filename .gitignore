@@ -9,5 +9,6 @@ ENV/
 env.bak/
 venv.bak/
 data/
+
 test_main_global.py
-main_global.py
+test_show_result_global.py

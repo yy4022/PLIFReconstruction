@@ -145,8 +145,8 @@ validation_PLIF_loader = DataLoader(dataset=validation_PLIF_dataset, batch_size=
 fullyCNN = FullyCNN()
 
 # check if there is an existing model
-if os.path.exists('./model/fullyCNN.pt'):
-    fullyCNN = torch.load('./model/fullyCNN.pt')
+if os.path.exists('model/fullyCNN.pt'):
+    fullyCNN = torch.load('model/fullyCNN.pt')
 
     # set the if_existing flag
     if_existing = True
@@ -170,10 +170,10 @@ best_loss = 10.0
 
 if if_existing == True:
     train_loss_records = \
-        np.append(train_loss_records, np.load('./result/train_loss_records.npy'))
+        np.append(train_loss_records, np.load('result/train_loss_records.npy'))
 
     validation_loss_records = \
-        np.append(validation_loss_records, np.load('./result/validation_loss_records.npy'))
+        np.append(validation_loss_records, np.load('result/validation_loss_records.npy'))
 
     best_loss = validation_loss_records.min()
     print(f"Load the existing loss records, and current best loss is {best_loss}.")
@@ -208,11 +208,11 @@ for epoch in range(EPOCHS):
 
     if validation_loss < best_loss:
         best_loss = validation_loss
-        torch.save(fullyCNN, './model/fullyCNN.pt')
+        torch.save(fullyCNN, 'model/fullyCNN.pt')
 
 # save loss records of training and validation process
-np.save("./result/train_loss_records.npy", train_loss_records)
-np.save("./result/validation_loss_records.npy", validation_loss_records)
+np.save("result/train_loss_records.npy", train_loss_records)
+np.save("result/validation_loss_records.npy", validation_loss_records)
 
 loss_records = {
     'train_loss_records': train_loss_records,

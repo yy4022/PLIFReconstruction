@@ -144,8 +144,8 @@ testing_PLIF_loader = DataLoader(dataset=testing_PLIF_dataset, batch_size=batch_
 fullyCNN = FullyCNN()
 
 # check if there is an existing model
-if os.path.exists('./model/fullyCNN.pt'):
-    fullyCNN = torch.load('./model/fullyCNN.pt')
+if os.path.exists('model/fullyCNN.pt'):
+    fullyCNN = torch.load('model/fullyCNN.pt')
 
     # set the if_existing flag
     if_existing = True
