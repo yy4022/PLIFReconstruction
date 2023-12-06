@@ -9,7 +9,7 @@ from fullyCNN.neural_net import FullyCNN
 from fullyCNN.predict import fullyCNN_predict
 from fullyCNN.validate import validate_epoch
 from preprocess_methods import MyDataset
-from result_visualiser import show_comparison, show_difference
+from show_methods import show_comparison, show_difference
 
 """
 This file is used for showing the results via the trained global model.

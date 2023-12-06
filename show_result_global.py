@@ -9,7 +9,7 @@ from torch.utils.data import DataLoader
 from fullyCNN.predict import fullyCNN_predict
 from fullyCNN.validate import validate_epoch
 from fullyCNN.neural_net import FullyCNN
-from result_visualiser import show_difference, show_comparison
+from show_methods import show_difference, show_comparison
 
 """
 This file is used for showing the results via the trained global model.

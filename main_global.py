@@ -10,7 +10,7 @@ from torchsummary import summary
 from fullyCNN.train import train_epoch
 from fullyCNN.validate import validate_epoch
 from fullyCNN.neural_net import FullyCNN
-from result_visualiser import show_loss
+from show_methods import show_loss
 
 """
 This file is used for testing the whole process of training the global model.
