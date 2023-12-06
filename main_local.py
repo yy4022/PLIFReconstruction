@@ -35,7 +35,7 @@ EPOCHS = 9000
 lr = 0.0001
 if_existing = False  # a flag recording if there is an existing fullyCNN model
 dataset_num = 4
-specified_box = 9  # indicates which specified box corresponds to the local fullyCNN model, range in [1, 12]
+specified_box = 12  # indicates which specified box corresponds to the local fullyCNN model, range in [1, 12]
 
 # PART 2：create the dataloader for training the model of the specified box
 # 2.1. read the specified box image data from all data files
