@@ -2,7 +2,7 @@ import pickle
 
 import numpy as np
 
-from preprocess_methods import MyDataset, crop_old_PIVdata, crop_old_PLIFdata, \
+from methods_preprocess import MyDataset, crop_old_PIVdata, crop_old_PLIFdata, \
     get_min_max, preprocess_data_list, concatenate_data
 
 """

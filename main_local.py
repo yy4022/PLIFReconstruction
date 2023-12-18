@@ -9,8 +9,8 @@ from torchsummary import summary
 from fullyCNN.neural_net import FullyCNN
 from fullyCNN.train import train_epoch
 from fullyCNN.validate import validate_epoch
-from preprocess_methods import MyDataset
-from show_methods import show_loss
+from methods_preprocess import MyDataset
+from methods_show import show_loss
 
 """
 This file is used for testing the whole process of training the local model.
@@ -47,7 +47,6 @@ validation_x_PIV_data_box = []
 
 # use loop to collect all data of the specified box
 for i in range(dataset_num):
-
     training_PLIF_data = np.load(f'data/Preprocessed_Data_old/training_PLIF_data{i + 1}.npy')
     training_x_PIV_data = np.load(f'data/Preprocessed_Data_old/training_x_PIV_data{i + 1}.npy')
     training_PLIF_data_box.append(training_PLIF_data[specified_box - 1, :, :, :])
@@ -167,4 +166,3 @@ loss_records = {
 # PART 5: show the results
 # 5.1. show the loss records of the whole training process
 show_loss(loss_records, f"fullyCNN_loss_box{specified_box}.png")
-

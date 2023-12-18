@@ -7,10 +7,10 @@ from torch import nn
 from torch.utils.data import DataLoader
 from torchsummary import summary
 
+from fullyCNN.neural_net import FullyCNN
 from fullyCNN.train import train_epoch
 from fullyCNN.validate import validate_epoch
-from fullyCNN.neural_net import FullyCNN
-from show_methods import show_loss
+from methods_show import show_loss
 
 """
 This file is used for testing the whole process of training the global model.

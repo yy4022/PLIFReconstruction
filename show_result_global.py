@@ -6,10 +6,10 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader
 
+from fullyCNN.neural_net import FullyCNN
 from fullyCNN.predict import fullyCNN_predict
 from fullyCNN.validate import validate_epoch
-from fullyCNN.neural_net import FullyCNN
-from show_methods import show_difference, show_comparison
+from methods_show import show_difference, show_comparison
 
 """
 This file is used for showing the results via the trained global model.
@@ -30,7 +30,7 @@ rows = 3
 columns = 4
 boxes = rows * columns
 img_num = 0
-specified_dataset = 1 # range in [1, 4]
+specified_dataset = 1  # range in [1, 4]
 
 # PART 2: load the existing model for showing results
 # 1. define the FullyCNN model
@@ -163,4 +163,3 @@ show_comparison(prediction_data=testing_prediction, actual_data=testing_x_PIV_da
 
 show_difference(difference=testing_difference, filename="testing_difference.png",
                 rows=rows, columns=columns, img_num=img_num)
-

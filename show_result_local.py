@@ -8,8 +8,8 @@ from torch.utils.data import DataLoader
 from fullyCNN.neural_net import FullyCNN
 from fullyCNN.predict import fullyCNN_predict
 from fullyCNN.validate import validate_epoch
-from preprocess_methods import MyDataset
-from show_methods import show_comparison, show_difference
+from methods_preprocess import MyDataset
+from methods_show import show_comparison, show_difference
 
 """
 This file is used for showing the results via the trained global model.
@@ -167,5 +167,3 @@ show_comparison(prediction_data=testing_prediction, actual_data=testing_x_PIV_da
 testing_difference = testing_prediction - testing_x_PIV_data
 show_difference(difference=testing_difference, filename="testing_difference.png",
                 rows=rows, columns=columns, img_num=img_num)
-
-
