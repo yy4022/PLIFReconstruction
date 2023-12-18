@@ -1,5 +1,6 @@
 import numpy as np
 from matplotlib import pyplot as plt
+from matplotlib.lines import Line2D
 
 """
 PART 1 -- Compare the MSE loss during the training process for all models.
@@ -53,15 +54,23 @@ for i in range(boxes):
     local_loss_records_i = local_loss_records_i / 4
 
     # plot the MSE loss line for box-i
-    plt.semilogy(local_loss_records_i, label=f'Local-box{i + 1}', color='black')
+    plt.semilogy(local_loss_records_i, label='Local', color='black')
 
-#
+# STEP 4: adjust the settings of the figure
 plt.xlim(0, 10000)
-# plt.ylim(1e-2, 1.2e-2)
+# plt.ylim(0, 1)
 
 plt.xlabel('Epochs')
 plt.ylabel('MSE')
-plt.legend()
+
+global_line = Line2D([0], [0], color='red', label='Global')
+local_line = Line2D([0], [0], color='black', label='Local')
+
+legend_elements = [global_line] + [local_line]
+legend = plt.legend(handles=legend_elements, loc='upper right')
+for line, label in zip(legend.get_lines(), ['Global'] + ['Local']):
+    line.set_label(label)
 
 # plt.savefig(f"./result/{filename}")
+plt.title('PIV-x')
 plt.show()
