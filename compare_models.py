@@ -1,3 +1,5 @@
+import json
+
 import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib.lines import Line2D
@@ -74,3 +76,13 @@ for line, label in zip(legend.get_lines(), ['Global'] + ['Local']):
 # plt.savefig(f"./result/{filename}")
 plt.title('PIV-x')
 plt.show()
+
+"""
+PART 2: calculate the unscaled MSE loss of every box for both models
+"""
+
+# STEP 1: load the min and max values of all datasets
+with open('data/Preprocessed_Data_old/dataset_information.json', 'r') as file:
+    loaded_data = json.load(file)
+
+print(loaded_data)
