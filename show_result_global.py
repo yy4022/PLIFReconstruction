@@ -30,7 +30,7 @@ rows = 3
 columns = 4
 boxes = rows * columns
 img_num = 0
-specified_dataset = 1  # range in [1, 4]
+specified_dataset = 1  # range in [1, 7]
 
 # PART 2: load the existing model for showing results
 # 1. define the FullyCNN model
@@ -52,15 +52,16 @@ loss_fn = nn.MSELoss()
 
 # PART 3. show the training set results
 # 3.1. load the numpy array
-training_x_PIV_data = np.load(f'data/Preprocessed_Data_old/training_x_PIV_data{specified_dataset}.npy')
+training_x_PIV_data \
+    = np.load(f'data/Preprocessed_Data_Fulldataset/data_PIV/training_PIV_x_data{specified_dataset}.npy')
 PIV_x_height = training_x_PIV_data.shape[2]
 PIV_x_width = training_x_PIV_data.shape[3]
 
 # 3.2. load the dataset
-with open(f'data/Preprocessed_Data_old/training_PLIF_dataset{specified_dataset}.pkl', 'rb') as file:
+with open(f'data/Preprocessed_Data_Fulldataset/data_PLIF/training_PLIF_dataset{specified_dataset}.pkl', 'rb') as file:
     training_PLIF_dataset = pickle.load(file)
 
-with open(f'data/Preprocessed_Data_old/training_x_PIV_dataset{specified_dataset}.pkl', 'rb') as file:
+with open(f'data/Preprocessed_Data_Fulldataset/data_PIV/training_PIV_x_dataset{specified_dataset}.pkl', 'rb') as file:
     training_x_PIV_dataset = pickle.load(file)
 
 # 3.3. create the dataloader
@@ -94,15 +95,16 @@ print(np.amax(training_x_PIV_data))
 
 # PART 4. show the validation set results
 # 4.1. load the numpy array
-validation_x_PIV_data = np.load(f'data/Preprocessed_Data_old/validation_x_PIV_data{specified_dataset}.npy')
+validation_x_PIV_data \
+    = np.load(f'data/Preprocessed_Data_Fulldataset/data_PIV/validation_PIV_x_data{specified_dataset}.npy')
 PIV_x_height = validation_x_PIV_data.shape[2]
 PIV_x_width = validation_x_PIV_data.shape[3]
 
 # 4.2. load the dataset
-with open(f'data/Preprocessed_Data_old/validation_PLIF_dataset{specified_dataset}.pkl', 'rb') as file:
+with open(f'data/Preprocessed_Data_Fulldataset/data_PLIF/validation_PLIF_dataset{specified_dataset}.pkl', 'rb') as file:
     validation_PLIF_dataset = pickle.load(file)
 
-with open(f'data/Preprocessed_Data_old/validation_x_PIV_dataset{specified_dataset}.pkl', 'rb') as file:
+with open(f'data/Preprocessed_Data_Fulldataset/data_PIV/validation_PIV_x_dataset{specified_dataset}.pkl', 'rb') as file:
     validation_x_PIV_dataset = pickle.load(file)
 
 # 4.3. create the dataloader
@@ -130,15 +132,15 @@ show_difference(difference=validation_difference, filename="validataion_differen
 
 # PART 5. show the validation set results
 # 5.1. load the numpy array
-testing_x_PIV_data = np.load(f'data/Preprocessed_Data_old/testing_x_PIV_data{specified_dataset}.npy')
+testing_x_PIV_data = np.load(f'data/Preprocessed_Data_Fulldataset/data_PIV/testing_x_PIV_data8.npy')
 PIV_x_height = testing_x_PIV_data.shape[2]
 PIV_x_width = testing_x_PIV_data.shape[3]
 
 # 5.2. load the dataset
-with open(f'data/Preprocessed_Data_old/testing_PLIF_dataset{specified_dataset}.pkl', 'rb') as file:
+with open(f'data/Preprocessed_Data_Fulldataset/data_PLIF/testing_PLIF_dataset8.pkl', 'rb') as file:
     testing_PLIF_dataset = pickle.load(file)
 
-with open(f'data/Preprocessed_Data_old/testing_x_PIV_dataset{specified_dataset}.pkl', 'rb') as file:
+with open(f'data/Preprocessed_Data_Fulldataset/data_PIV/testing_PIV_x_dataset8.pkl', 'rb') as file:
     testing_x_PIV_dataset = pickle.load(file)
 
 # 5.3. create the dataloader
