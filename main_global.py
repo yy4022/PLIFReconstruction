@@ -31,10 +31,10 @@ batch_size = 200
 rows = 3
 columns = 4
 img_num = 0
-EPOCHS = 5000
+EPOCHS = 1000
 lr = 0.0001
 if_existing = False  # a flag recording if there is an existing fullyCNN model
-dataset_num = 4
+dataset_num = 7
 
 # PART 2：create the dataloader for training
 # 2.1. load the datasets
@@ -45,16 +45,16 @@ validation_PLIF_dataset_list = []
 validation_x_PIV_dataset_list = []
 
 for i in range(dataset_num):
-    with open(f'data/Preprocessed_Data_old/training_PLIF_dataset{i + 1}.pkl', 'rb') as file:
+    with open(f'data/Preprocessed_Data_Fulldataset/data_PLIF/training_PLIF_dataset{i + 1}.pkl', 'rb') as file:
         training_PLIF_dataset = pickle.load(file)
 
-    with open(f'data/Preprocessed_Data_old/training_x_PIV_dataset{i + 1}.pkl', 'rb') as file:
+    with open(f'data/Preprocessed_Data_Fulldataset/data_PIV/training_PIV_x_dataset{i + 1}.pkl', 'rb') as file:
         training_x_PIV_dataset = pickle.load(file)
 
-    with open(f'data/Preprocessed_Data_old/validation_PLIF_dataset{i + 1}.pkl', 'rb') as file:
+    with open(f'data/Preprocessed_Data_Fulldataset/data_PLIF/validation_PLIF_dataset{i + 1}.pkl', 'rb') as file:
         validation_PLIF_dataset = pickle.load(file)
 
-    with open(f'data/Preprocessed_Data_old/validation_x_PIV_dataset{i + 1}.pkl', 'rb') as file:
+    with open(f'data/Preprocessed_Data_Fulldataset/data_PIV/validation_PIV_x_dataset{i + 1}.pkl', 'rb') as file:
         validation_x_PIV_dataset = pickle.load(file)
 
     training_PLIF_dataset_list.append(training_PLIF_dataset)
@@ -89,7 +89,7 @@ fullyCNN = FullyCNN()
 if os.path.exists('./model/fullyCNN.pt'):
     fullyCNN = torch.load('./model/fullyCNN.pt')
 
-    # set the if_existing flag
+    # set if_existing flag
     if_existing = True
     print("Load the existing fullyCNN model, then continue training.")
 else:
