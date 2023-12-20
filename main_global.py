@@ -31,7 +31,7 @@ batch_size = 200
 rows = 3
 columns = 4
 img_num = 0
-EPOCHS = 50
+EPOCHS = 1000
 lr = 0.0001
 if_existing = False  # a flag recording if there is an existing fullyCNN model
 dataset_num = 7
@@ -48,13 +48,13 @@ for i in range(dataset_num):
     with open(f'data/Preprocessed_Data_Fulldataset/data_PLIF/training_PLIF_dataset{i + 1}.pkl', 'rb') as file:
         training_PLIF_dataset = pickle.load(file)
 
-    with open(f'data/Preprocessed_Data_Fulldataset/data_PIV/training_PIV_y_dataset{i + 1}.pkl', 'rb') as file:
+    with open(f'data/Preprocessed_Data_Fulldataset/data_PIV/training_PIV_z_dataset{i + 1}.pkl', 'rb') as file:
         training_x_PIV_dataset = pickle.load(file)
 
     with open(f'data/Preprocessed_Data_Fulldataset/data_PLIF/validation_PLIF_dataset{i + 1}.pkl', 'rb') as file:
         validation_PLIF_dataset = pickle.load(file)
 
-    with open(f'data/Preprocessed_Data_Fulldataset/data_PIV/validation_PIV_y_dataset{i + 1}.pkl', 'rb') as file:
+    with open(f'data/Preprocessed_Data_Fulldataset/data_PIV/validation_PIV_z_dataset{i + 1}.pkl', 'rb') as file:
         validation_x_PIV_dataset = pickle.load(file)
 
     training_PLIF_dataset_list.append(training_PLIF_dataset)

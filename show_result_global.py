@@ -29,7 +29,7 @@ batch_size = 200
 rows = 3
 columns = 4
 boxes = rows * columns
-img_num = 0
+img_num = 100
 specified_dataset = 1  # range in [1, 7]
 
 # PART 2: load the existing model for showing results
@@ -132,7 +132,7 @@ show_difference(difference=validation_difference, filename="validataion_differen
 
 # PART 5. show the validation set results
 # 5.1. load the numpy array
-testing_x_PIV_data = np.load(f'data/Preprocessed_Data_Fulldataset/data_PIV/testing_x_PIV_data8.npy')
+testing_x_PIV_data = np.load(f'data/Preprocessed_Data_Fulldataset/data_PIV/testing_PIV_x_data8.npy')
 PIV_x_height = testing_x_PIV_data.shape[2]
 PIV_x_width = testing_x_PIV_data.shape[3]
 
