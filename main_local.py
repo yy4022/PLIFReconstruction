@@ -35,7 +35,7 @@ EPOCHS = 1000
 lr = 0.0001
 if_existing = False  # a flag recording if there is an existing fullyCNN model
 dataset_num = 7
-specified_box = 12  # indicates which specified box corresponds to the local fullyCNN model, range in [1, 12]
+specified_box = 4  # indicates which specified box corresponds to the local fullyCNN model, range in [1, 12]
 
 # PART 2：create the dataloader for training the model of the specified box
 # 2.1. read the specified box image data from all data files
@@ -48,12 +48,12 @@ validation_x_PIV_data_box = []
 # use loop to collect all data of the specified box
 for i in range(dataset_num):
     training_PLIF_data = np.load(f'data/Preprocessed_Data_Fulldataset/data_PLIF/training_PLIF_data{i + 1}.npy')
-    training_x_PIV_data = np.load(f'data/Preprocessed_Data_Fulldataset/data_PIV/training_PIV_x_data{i + 1}.npy')
+    training_x_PIV_data = np.load(f'data/Preprocessed_Data_Fulldataset/data_PIV/training_PIV_y_data{i + 1}.npy')
     training_PLIF_data_box.append(training_PLIF_data[specified_box - 1, :, :, :])
     training_x_PIV_data_box.append(training_x_PIV_data[specified_box - 1, :, :, :])
 
     validation_PLIF_data = np.load(f'data/Preprocessed_Data_Fulldataset/data_PLIF/validation_PLIF_data{i + 1}.npy')
-    validation_x_PIV_data = np.load(f'data/Preprocessed_Data_Fulldataset/data_PIV/validation_PIV_x_data{i}.npy')
+    validation_x_PIV_data = np.load(f'data/Preprocessed_Data_Fulldataset/data_PIV/validation_PIV_y_data{i}.npy')
     validation_PLIF_data_box.append(validation_PLIF_data[specified_box - 1, :, :, :])
     validation_x_PIV_data_box.append(validation_x_PIV_data[specified_box - 1, :, :, :])
 
