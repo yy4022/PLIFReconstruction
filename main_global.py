@@ -31,7 +31,7 @@ batch_size = 200
 rows = 3
 columns = 4
 img_num = 0
-EPOCHS = 1000
+EPOCHS = 900
 lr = 0.0001
 if_existing = False  # a flag recording if there is an existing fullyCNN model
 dataset_num = 7
@@ -174,4 +174,4 @@ loss_records = {
 
 # PART 5: show the results
 # 5.1. show the loss records of the whole training process
-show_loss(loss_records, "fullyCNN_loss.png")
+# show_loss(loss_records, "fullyCNN_loss.png")
