@@ -37,8 +37,8 @@ specified_dataset = 1  # range in [1, 7]
 fullyCNN = FullyCNN()
 
 # check if there is an existing model
-if os.path.exists('./model/fullyCNN.pt'):
-    fullyCNN = torch.load('./model/fullyCNN.pt')
+if os.path.exists('./model/global_models/PIV_x/fullyCNN.pt'):
+    fullyCNN = torch.load('./model/global_models/PIV_x/fullyCNN.pt')
 
     # set the if_existing flag
     if_existing = True
@@ -96,7 +96,7 @@ print(np.amax(training_x_PIV_data))
 # PART 4. show the validation set results
 # 4.1. load the numpy array
 validation_x_PIV_data \
-    = np.load(f'data/Preprocessed_Data_Fulldataset/data_PIV/validation_PIV_x_data{specified_dataset}.npy')
+    = np.load(f'data/Preprocessed_Data_Fulldataset/data_PIV/validation_PIV_x_data{specified_dataset - 1}.npy')
 PIV_x_height = validation_x_PIV_data.shape[2]
 PIV_x_width = validation_x_PIV_data.shape[3]
 

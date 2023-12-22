@@ -30,17 +30,19 @@ rows = 3
 columns = 4
 boxes = rows * columns
 img_num = 0
-specified_dataset = 1  # range in [1, 4]
+specified_dataset = 1  # range in [1, 7]
 
 # PART 2. show the results of the trained model
 # 2.1. load the numpy array
-training_PLIF_data = np.load(f'data/Preprocessed_Data_old/training_PLIF_data{specified_dataset}.npy')
-validation_PLIF_data = np.load(f'data/Preprocessed_Data_old/validation_PLIF_data{specified_dataset}.npy')
-testing_PLIF_data = np.load(f'data/Preprocessed_Data_old/testing_PLIF_data{specified_dataset}.npy')
+training_PLIF_data = np.load(f'data/Preprocessed_Data_Fulldataset/data_PLIF/training_PLIF_data{specified_dataset}.npy')
+validation_PLIF_data = np.load(
+    f'data/Preprocessed_Data_Fulldataset/data_PLIF/validation_PLIF_data{specified_dataset}.npy')
+testing_PLIF_data = np.load(f'data/Preprocessed_Data_Fulldataset/data_PLIF/testing_PLIF_data8.npy')
 
-training_x_PIV_data = np.load(f'data/Preprocessed_Data_old/training_x_PIV_data{specified_dataset}.npy')
-validation_x_PIV_data = np.load(f'data/Preprocessed_Data_old/validation_x_PIV_data{specified_dataset}.npy')
-testing_x_PIV_data = np.load(f'data/Preprocessed_Data_old/testing_x_PIV_data{specified_dataset}.npy')
+training_x_PIV_data = np.load(f'data/Preprocessed_Data_Fulldataset/data_PIV/training_PIV_x_data{specified_dataset}.npy')
+validation_x_PIV_data = np.load(
+    f'data/Preprocessed_Data_Fulldataset/data_PIV/validation_PIV_x_data{specified_dataset - 1}.npy')
+testing_x_PIV_data = np.load('data/Preprocessed_Data_Fulldataset/data_PIV/testing_PIV_x_data8.npy')
 
 # 2.2. process the specified dataset, load the model of the specified box, then make predictions
 training_prediction = np.empty_like(training_x_PIV_data)
@@ -98,8 +100,8 @@ for i in range(rows * columns):
     fullyCNN = FullyCNN()
 
     # check if there is an existing model
-    if os.path.exists(f'./model/fullyCNN_box{specified_box}.pt'):
-        fullyCNN = torch.load(f'./model/fullyCNN_box{specified_box}.pt')
+    if os.path.exists(f'./model/local_models/PIV_x/fullyCNN_box{specified_box}.pt'):
+        fullyCNN = torch.load(f'./model/local_models/PIV_x/fullyCNN_box{specified_box}.pt')
 
         # set the if_existing flag
         if_existing = True

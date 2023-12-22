@@ -31,7 +31,7 @@ batch_size = 200
 rows = 3
 columns = 4
 img_num = 0
-EPOCHS = 900
+EPOCHS = 4000
 lr = 0.0001
 if_existing = False  # a flag recording if there is an existing fullyCNN model
 dataset_num = 7
@@ -48,13 +48,13 @@ for i in range(dataset_num):
     with open(f'data/Preprocessed_Data_Fulldataset/data_PLIF/training_PLIF_dataset{i + 1}.pkl', 'rb') as file:
         training_PLIF_dataset = pickle.load(file)
 
-    with open(f'data/Preprocessed_Data_Fulldataset/data_PIV/training_PIV_z_dataset{i + 1}.pkl', 'rb') as file:
+    with open(f'data/Preprocessed_Data_Fulldataset/data_PIV/training_PIV_x_dataset{i + 1}.pkl', 'rb') as file:
         training_x_PIV_dataset = pickle.load(file)
 
     with open(f'data/Preprocessed_Data_Fulldataset/data_PLIF/validation_PLIF_dataset{i + 1}.pkl', 'rb') as file:
         validation_PLIF_dataset = pickle.load(file)
 
-    with open(f'data/Preprocessed_Data_Fulldataset/data_PIV/validation_PIV_z_dataset{i + 1}.pkl', 'rb') as file:
+    with open(f'data/Preprocessed_Data_Fulldataset/data_PIV/validation_PIV_x_dataset{i + 1}.pkl', 'rb') as file:
         validation_x_PIV_dataset = pickle.load(file)
 
     training_PLIF_dataset_list.append(training_PLIF_dataset)
@@ -86,8 +86,8 @@ for i in range(dataset_num):
 fullyCNN = FullyCNN()
 
 # check if there is an existing model
-if os.path.exists('./model/fullyCNN.pt'):
-    fullyCNN = torch.load('./model/fullyCNN.pt')
+if os.path.exists('./model/global_models/PIV_x/fullyCNN.pt'):
+    fullyCNN = torch.load('./model/global_models/PIV_x/fullyCNN.pt')
 
     # set if_existing flag
     if_existing = True
@@ -111,10 +111,10 @@ best_loss = 10.0
 
 if if_existing == True:
     train_loss_records = \
-        np.append(train_loss_records, np.load('./result/train_loss_records.npy'))
+        np.append(train_loss_records, np.load('./result/global_results/PIV_x/train_loss_records.npy'))
 
     validation_loss_records = \
-        np.append(validation_loss_records, np.load('./result/validation_loss_records.npy'))
+        np.append(validation_loss_records, np.load('./result/global_results/PIV_x/validation_loss_records.npy'))
 
     best_loss = validation_loss_records.min()
     print(f"Load the existing loss records, and current best loss is {best_loss}.")
@@ -161,11 +161,11 @@ for epoch in range(EPOCHS):
 
     if validation_loss < best_loss:
         best_loss = validation_loss
-        torch.save(fullyCNN, './model/fullyCNN.pt')
+        torch.save(fullyCNN, './model/global_models/PIV_x/fullyCNN.pt')
 
 # save loss records of training and validation process
-np.save("./result/train_loss_records.npy", train_loss_records)
-np.save("./result/validation_loss_records.npy", validation_loss_records)
+np.save("./result/global_results/PIV_x/train_loss_records.npy", train_loss_records)
+np.save("./result/global_results/PIV_x/validation_loss_records.npy", validation_loss_records)
 
 loss_records = {
     'train_loss_records': train_loss_records,
