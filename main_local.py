@@ -52,12 +52,12 @@ for box_num in range(12):
     # use loop to collect all data of the specified box
     for i in range(dataset_num):
         training_PLIF_data = np.load(f'data/Preprocessed_Data_Fulldataset/data_PLIF/training_PLIF_data{i + 1}.npy')
-        training_x_PIV_data = np.load(f'data/Preprocessed_Data_Fulldataset/data_PIV/training_PIV_y_data{i + 1}.npy')
+        training_x_PIV_data = np.load(f'data/Preprocessed_Data_Fulldataset/data_PIV/training_PIV_z_data{i + 1}.npy')
         training_PLIF_data_box.append(training_PLIF_data[specified_box - 1, :, :, :])
         training_x_PIV_data_box.append(training_x_PIV_data[specified_box - 1, :, :, :])
 
         validation_PLIF_data = np.load(f'data/Preprocessed_Data_Fulldataset/data_PLIF/validation_PLIF_data{i + 1}.npy')
-        validation_x_PIV_data = np.load(f'data/Preprocessed_Data_Fulldataset/data_PIV/validation_PIV_y_data{i}.npy')
+        validation_x_PIV_data = np.load(f'data/Preprocessed_Data_Fulldataset/data_PIV/validation_PIV_z_data{i}.npy')
         validation_PLIF_data_box.append(validation_PLIF_data[specified_box - 1, :, :, :])
         validation_x_PIV_data_box.append(validation_x_PIV_data[specified_box - 1, :, :, :])
 
@@ -93,8 +93,8 @@ for box_num in range(12):
     fullyCNN = FullyCNN()
 
     # check if there is an existing model
-    if os.path.exists(f'./model/local_models/PIV_y/fullyCNN_box{specified_box}.pt'):
-        fullyCNN = torch.load(f'./model/local_models/PIV_y/fullyCNN_box{specified_box}.pt')
+    if os.path.exists(f'./model/local_models/PIV_z/fullyCNN_box{specified_box}.pt'):
+        fullyCNN = torch.load(f'./model/local_models/PIV_z/fullyCNN_box{specified_box}.pt')
 
         # set the if_existing flag
         if_existing = True
@@ -119,11 +119,11 @@ for box_num in range(12):
     if if_existing == True:
         train_loss_records = \
             np.append(train_loss_records,
-                      np.load(f'./result/local_results/PIV_y/train_loss_records_box{specified_box}.npy'))
+                      np.load(f'./result/local_results/PIV_z/train_loss_records_box{specified_box}.npy'))
 
         validation_loss_records = \
             np.append(validation_loss_records,
-                      np.load(f'./result/local_results/PIV_y/validation_loss_records_box{specified_box}.npy'))
+                      np.load(f'./result/local_results/PIV_z/validation_loss_records_box{specified_box}.npy'))
 
         best_loss = validation_loss_records.min()
         print(f"Load the existing loss records, and current best loss is {best_loss}.")
@@ -158,11 +158,11 @@ for box_num in range(12):
 
         if validation_loss < best_loss:
             best_loss = validation_loss
-            torch.save(fullyCNN, f'./model/local_models/PIV_y/fullyCNN_box{specified_box}.pt')
+            torch.save(fullyCNN, f'./model/local_models/PIV_z/fullyCNN_box{specified_box}.pt')
 
     # save loss records of training and validation process
-    np.save(f"./result/local_results/PIV_y/train_loss_records_box{specified_box}.npy", train_loss_records)
-    np.save(f"./result/local_results/PIV_y/validation_loss_records_box{specified_box}.npy", validation_loss_records)
+    np.save(f"./result/local_results/PIV_z/train_loss_records_box{specified_box}.npy", train_loss_records)
+    np.save(f"./result/local_results/PIV_z/validation_loss_records_box{specified_box}.npy", validation_loss_records)
 
     # loss_records = {
     #     'train_loss_records': train_loss_records,
